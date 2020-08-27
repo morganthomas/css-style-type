@@ -1776,6 +1776,23 @@ instance ToCSS Display where
     DisplayUnset -> "unset"
 
 
+data EmptyCells =
+    EmptyCellsShow
+  | EmptyCellsHide
+  | EmptyCellsInherit
+  | EmptyCellsInitial
+  | EmptyCellsUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS EmptyCells where
+  toCSS = \case
+    EmptyCellsShow -> "show"
+    EmptyCellsHide -> "hide"
+    EmptyCellsInherit -> "inherit"
+    EmptyCellsInitial -> "initial"
+    EmptyCellsUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1863,6 +1880,7 @@ data StyleProperty =
   | Cursor Cursors
   | Direction Direction
   | Display Display
+  | EmptyCells EmptyCells
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -1952,6 +1970,7 @@ instance ToCSS StyleProperty where
     Cursor x -> "cursor: " <> toCSS x
     Direction x -> "direction: " <> toCSS x
     Display x -> "display: " <> toCSS x
+    EmptyCells x -> "empty-cells: " <> toCSS x
 
 
 type Style = [StyleProperty]
