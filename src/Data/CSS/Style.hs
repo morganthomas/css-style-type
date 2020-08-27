@@ -1534,6 +1534,25 @@ instance ToCSS ColumnFill where
     ColumnFillUnset -> "unset"
 
 
+data ColumnGap =
+    ColumnGapNormal
+  | ColumnGapLength Length
+  | ColumnGapPercent Percent
+  | ColumnGapInitial
+  | ColumnGapInherit
+  | ColumnGapUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ColumnGap where
+  toCSS = \case
+    ColumnGapNormal -> "normal"
+    ColumnGapLength x -> toCSS x
+    ColumnGapPercent x -> toCSS x
+    ColumnGapInitial -> "initial"
+    ColumnGapInherit -> "inherit"
+    ColumnGapUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1611,6 +1630,7 @@ data StyleProperty =
   | ColorAdjust ColorAdjust
   | ColumnCount ColumnCount
   | ColumnFill ColumnFill
+  | ColumnGap ColumnGap
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1688,6 +1708,7 @@ instance ToCSS StyleProperty where
     ColorAdjust x -> "color-adjust: " <> toCSS x
     ColumnCount x -> "column-count: " <> toCSS x
     ColumnFill x -> "column-fill: " <> toCSS x
+    ColumnGap x -> "column-gap: " <> toCSS x
 
 
 type Style = [StyleProperty]
