@@ -954,6 +954,17 @@ instance ToCSS LinearColorStop where
     <> maybeToCSS s0 <> " " <> maybeToCSS s1
 
 
+data AngularColorStop = AngularColorStop
+                      { acsColor :: Color
+                      , acsStop0 :: Maybe Dimension
+                      , acsStop1 :: Maybe Dimension }
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS AngularColorStop where
+  toCSS (AngularColorStop c s0 s1) = toCSS c <> " "
+    <> maybeToCSS s0 <> " " <> maybeToCSS s1
+
+
 data Position0 = PositionTop
                | PositionBottom
                | PositionLeft
@@ -1039,13 +1050,28 @@ data RadialGradient = RadialGradient
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS RadialGradient where
-  toCSS  (RadialGradient pos shape extent stops) =
+  toCSS (RadialGradient pos shape extent stops) =
     "radial-gradient(" <>
     ( intercalate " " $
       maybeToList (toCSS <$> shape) <>
       maybeToList (("at " <>) . toCSS <$> pos) <>
       maybeToList (toCSS <$> extent) ) <>
-    ( listToCSS (toCSS <$> stops) ) <> ")"
+    ( listToCSS stops ) <> ")"
+
+
+data ConicGradient = ConicGradient
+  { cgAngle    :: Maybe Angle
+  , cgPosition :: Maybe Position
+  , cgStops    :: [AngularColorStop] }
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ConicGradient where
+  toCSS (ConicGradient angle pos stops) =
+    "conic-gradient(" <>
+    ( intercalate " " $
+      maybeToList (("from " <>) . toCSS <$> angle) <>
+      maybeToList (("at " <>) . toCSS <$> pos) ) <>
+    ( listToCSS stops )
 
 
 newtype RepeatingGradient g = Repeating g
@@ -1063,6 +1089,7 @@ data Gradient = GradientLinear LinearGradient
               | GradientRadial RadialGradient
               | GradientRepeatingLinear (RepeatingGradient LinearGradient)
               | GradientRepeatingRadial (RepeatingGradient RadialGradient)
+              | GradientConic ConicGradient
   -- TODO
   deriving (Eq, Ord, Generic, Read, Show)
 
@@ -1072,7 +1099,8 @@ instance ToCSS Gradient where
     GradientRadial x -> toCSS x
     GradientRepeatingLinear x -> toCSS x
     GradientRepeatingRadial x -> toCSS x
-        
+    GradientConic x -> toCSS x
+
 
 data StyleProperty =
     AlignContent AlignContent
