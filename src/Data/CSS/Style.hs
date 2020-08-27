@@ -1829,6 +1829,27 @@ instance ToCSS FlexSize where
     FlexSizeUnset -> "unset"
 
 
+data FlexDirection =
+    FlexDirectionRow
+  | FlexDirectionRowReverse
+  | FlexDirectionColumn
+  | FlexDirectionColumnReverse
+  | FlexDirectionInherit
+  | FlexDirectionInitial
+  | FlexDirectionUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS FlexDirection where
+  toCSS = \case
+    FlexDirectionRow -> "row"
+    FlexDirectionRowReverse -> "row-reverse"
+    FlexDirectionColumn -> "column"
+    FlexDirectionColumnReverse -> "column-reverse"
+    FlexDirectionInherit -> "inherit"
+    FlexDirectionInitial -> "initial"
+    FlexDirectionUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1919,6 +1940,7 @@ data StyleProperty =
   | EmptyCells EmptyCells
   | Filter Filter
   | FlexBasis FlexSize
+  | FlexDirection FlexDirection
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -2011,6 +2033,7 @@ instance ToCSS StyleProperty where
     EmptyCells x -> "empty-cells: " <> toCSS x
     Filter x -> "filter: " <> toCSS x
     FlexBasis x -> "flex-basis: " <> toCSS x
+    FlexDirection x -> "flex-direction: " <> toCSS x
 
 
 type Style = [StyleProperty]
