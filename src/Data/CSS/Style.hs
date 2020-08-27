@@ -1711,6 +1711,15 @@ instance ToCSS Cursors where
     CursorUnset -> "unset"
 
 
+data Direction = LTR | RTL
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Direction where
+  toCSS = \case
+    LTR -> "LTR"
+    RTL -> "RTL"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1796,6 +1805,7 @@ data StyleProperty =
   | ColumnWidth ColumnWidth
   | Contain Contains
   | Cursor Cursors
+  | Direction Direction
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -1883,6 +1893,7 @@ instance ToCSS StyleProperty where
     ColumnWidth x -> "column-width: " <> toCSS x
     Contain x -> "contain: " <> toCSS x
     Cursor x -> "cursor: " <> toCSS x
+    Direction x -> "direction: " <> toCSS x
 
 
 type Style = [StyleProperty]
