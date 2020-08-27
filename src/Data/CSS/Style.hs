@@ -1354,20 +1354,20 @@ instance ToCSS Offset where
 
 
 data BoxDecorationBreak =
-    BreakSlice
-  | BreakClone
-  | BreakInitial
-  | BreakInherit
-  | BreakUnset
+    BoxDecorationBreakSlice
+  | BoxDecorationBreakClone
+  | BoxDecorationBreakInitial
+  | BoxDecorationBreakInherit
+  | BoxDecorationBreakUnset
   deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
 
 instance ToCSS BoxDecorationBreak where
   toCSS = \case
-    BreakSlice -> "slice"
-    BreakClone -> "clone"
-    BreakInitial -> "intiial"
-    BreakInherit -> "inherit"
-    BreakUnset -> "unset"
+    BoxDecorationBreakSlice -> "slice"
+    BoxDecorationBreakClone -> "clone"
+    BoxDecorationBreakInitial -> "intiial"
+    BoxDecorationBreakInherit -> "inherit"
+    BoxDecorationBreakUnset -> "unset"
 
 
 data BoxSizing = BorderBox | ContentBox
@@ -1377,6 +1377,68 @@ instance ToCSS BoxSizing where
   toCSS = \case
     BorderBox -> "border-box"
     ContentBox -> "content-box"
+
+
+data BreakAround =
+    BreakAuto
+  | BreakAvoid
+  | BreakAlways
+  | BreakAll
+  | BreakAvoidPage
+  | BreakPage
+  | BreakLeft
+  | BreakRight
+  | BreakRecto
+  | BreakVerso
+  | BreakAvoidColumn
+  | BreakColumn
+  | BreakAvoidRegion
+  | BreakRegion
+  | BreakInherit
+  | BreakInitial
+  | BreakUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BreakAround where
+  toCSS = \case
+    BreakAuto -> "auto"
+    BreakAlways -> "always"
+    BreakAll -> "all"
+    BreakAvoidPage -> "avoid-page"
+    BreakPage -> "page"
+    BreakLeft -> "left"
+    BreakRight -> "right"
+    BreakRecto -> "recto"
+    BreakVerso -> "verso"
+    BreakAvoidColumn -> "avoid-column"
+    BreakAvoidRegion -> "avoid-region"
+    BreakRegion -> "region"
+    BreakInherit -> "inherit"
+    BreakInitial -> "initial"
+    BreakUnset -> "unset"
+
+
+data BreakInside =
+    BreakInsideAuto
+  | BreakInsideAvoid
+  | BreakInsideAvoidPage
+  | BreakInsideAvoidColumn
+  | BreakInsideAvoidRegion
+  | BreakInsideInherit
+  | BreakInsideInitial
+  | BreakInsideUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BreakInside where
+  toCSS = \case
+    BreakInsideAuto -> "auto"
+    BreakInsideAvoid -> "avoid"
+    BreakInsideAvoidPage -> "avoid-page"
+    BreakInsideAvoidColumn -> "avoid-column"
+    BreakInsideAvoidRegion -> "avoid-region"
+    BreakInsideInherit -> "inherit"
+    BreakInsideInitial -> "initial"
+    BreakInsideUnset -> "unset"
 
 
 data StyleProperty =
@@ -1445,7 +1507,9 @@ data StyleProperty =
   | BoxDecorationBreak BoxDecorationBreak
   -- TODO box-shadow
   | BoxSizing BoxSizing
-  
+  | BreakAfter BreakAround
+  | BreakBefore BreakAround
+  | BreakInside BreakInside
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1513,6 +1577,9 @@ instance ToCSS StyleProperty where
     BottomOffset x -> "bottom: " <> toCSS x
     BoxDecorationBreak x -> "box-decoration-break: " <> toCSS x
     BoxSizing x -> "box-sizing: " <> toCSS x
+    BreakAfter x -> "break-after: " <> toCSS x
+    BreakBefore x -> "break-before: " <> toCSS x
+    BreakInside x -> "break-inside: " <> toCSS x
 
 
 type Style = [StyleProperty]
