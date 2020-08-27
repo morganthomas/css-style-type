@@ -790,12 +790,20 @@ instance ToCSS FilterUrl where
 
 data Filter = FilterFunctions [FilterFunction]
             | SVGFilter FilterUrl
+            | NoFilter
+            | FilterInherit
+            | FilterInitial
+            | FilterUnset
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS Filter where
   toCSS = \case
     FilterFunctions x -> toCSS x
     SVGFilter x -> toCSS x
+    NoFilter -> "none"
+    FilterInitial -> "initial"
+    FilterInherit -> "inherit"
+    FilterUnset -> "unset"
 
 
 data Visibility = Visible
@@ -1881,6 +1889,7 @@ data StyleProperty =
   | Direction Direction
   | Display Display
   | EmptyCells EmptyCells
+  | Filter Filter
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -1971,6 +1980,7 @@ instance ToCSS StyleProperty where
     Direction x -> "direction: " <> toCSS x
     Display x -> "display: " <> toCSS x
     EmptyCells x -> "empty-cells: " <> toCSS x
+    Filter x -> "filter: " <> toCSS x
 
 
 type Style = [StyleProperty]
