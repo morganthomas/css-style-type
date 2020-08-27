@@ -1631,6 +1631,9 @@ data StyleProperty =
   | ColumnCount ColumnCount
   | ColumnFill ColumnFill
   | ColumnGap ColumnGap
+  | ColumnRuleColor Color
+  | ColumnRuleStyle BorderStyle
+  | ColumnRuleWidth BorderWidth
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1709,6 +1712,9 @@ instance ToCSS StyleProperty where
     ColumnCount x -> "column-count: " <> toCSS x
     ColumnFill x -> "column-fill: " <> toCSS x
     ColumnGap x -> "column-gap: " <> toCSS x
+    ColumnRuleColor x -> "column-rule-color: " <> toCSS x
+    ColumnRuleStyle x -> "column-rule-style: " <> toCSS x
+    ColumnRuleWidth x -> "column-rule-width: " <> toCSS x
 
 
 type Style = [StyleProperty]
