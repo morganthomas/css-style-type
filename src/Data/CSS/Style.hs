@@ -1562,6 +1562,25 @@ instance ToCSS ColumnSpan where
     ColumnSpanAll -> "all"
 
 
+data ColumnWidth =
+    ColumnWidthAuto
+  | ColumnWidthLength Length
+  | ColumnWidthPercent Percent
+  | ColumnWidthInherit
+  | ColumnWidthInitial
+  | ColumnWidthUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ColumnWidth where
+  toCSS = \case
+    ColumnWidthAuto -> "auto"
+    ColumnWidthLength x -> toCSS x
+    ColumnWidthPercent x -> toCSS x
+    ColumnWidthInherit -> "inherit"
+    ColumnWidthInitial -> "initial"
+    ColumnWidthUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1644,6 +1663,7 @@ data StyleProperty =
   | ColumnRuleStyle BorderStyle
   | ColumnRuleWidth BorderWidth
   | ColumnSpan ColumnSpan
+  | ColumnWidth ColumnWidth
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1726,6 +1746,7 @@ instance ToCSS StyleProperty where
     ColumnRuleStyle x -> "column-rule-style: " <> toCSS x
     ColumnRuleWidth x -> "column-rule-width: " <> toCSS x
     ColumnSpan x -> "column-span: " <> toCSS x
+    ColumnWidth x -> "column-width: " <> toCSS x
 
 
 type Style = [StyleProperty]
