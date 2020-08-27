@@ -1720,6 +1720,62 @@ instance ToCSS Direction where
     RTL -> "RTL"
 
 
+data Display =
+    DisplayBlock
+  | DisplayInline
+  | DisplayRunIn
+  | DisplayFlow
+  | DisplayFlowRoot
+  | DisplayTable
+  | DisplayFlex
+  | DisplayGrid
+  | DisplayListItem
+  | DisplayTableRowGroup
+  | DisplayTableHeaderGroup
+  | DisplayTableFooterGroup
+  | DisplayTableRow
+  | DisplayTableCell
+  | DisplayTableColumnGroup
+  | DisplayTableColumn
+  | DisplayTableCaption
+  | DisplayNone
+  | DisplayInlineBlock
+  | DisplayInlineTable
+  | DisplayInlineFlex
+  | DisplayInlineGrid
+  | DisplayInherit
+  | DisplayInitial
+  | DisplayUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS Display where
+  toCSS = \case
+    DisplayBlock -> "block"
+    DisplayInline -> "inline"
+    DisplayRunIn -> "run-in"
+    DisplayFlow -> "flow"
+    DisplayFlowRoot -> "flow-root"
+    DisplayTable -> "table"
+    DisplayFlex -> "flex"
+    DisplayGrid -> "grid"
+    DisplayListItem -> "list-item"
+    DisplayTableRowGroup -> "table-row-group"
+    DisplayTableHeaderGroup -> "table-header-group"
+    DisplayTableFooterGroup -> "table-footer-group"
+    DisplayTableRow -> "table-row"
+    DisplayTableCell -> "table-cell"
+    DisplayTableColumnGroup -> "table-column-group"
+    DisplayTableColumn -> "table-column"
+    DisplayTableCaption -> "table-caption"
+    DisplayNone -> "none"
+    DisplayInlineBlock -> "inline-block"
+    DisplayInlineTable -> "inline-table"
+    DisplayInlineFlex -> "inline-flex"
+    DisplayInherit -> "inherit"
+    DisplayInitial -> "initial"
+    DisplayUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1806,6 +1862,7 @@ data StyleProperty =
   | Contain Contains
   | Cursor Cursors
   | Direction Direction
+  | Display Display
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -1894,6 +1951,7 @@ instance ToCSS StyleProperty where
     Contain x -> "contain: " <> toCSS x
     Cursor x -> "cursor: " <> toCSS x
     Direction x -> "direction: " <> toCSS x
+    Display x -> "display: " <> toCSS x
 
 
 type Style = [StyleProperty]
