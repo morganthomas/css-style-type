@@ -1953,6 +1953,18 @@ instance ToCSS FontFamilies where
     FontFamilyUnset -> "unset"
 
 
+data FontKerning = KernAuto
+                 | KernNormal
+                 | KernNone
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS FontKerning where
+  toCSS = \case
+    KernAuto -> "auto"
+    KernNormal -> "normal"
+    KernNone -> "none"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -2036,6 +2048,8 @@ data StyleProperty =
   | ColumnRuleWidth BorderWidth
   | ColumnSpan ColumnSpan
   | ColumnWidth ColumnWidth
+  -- TODO content
+  -- TODO counter-increment, counter-reset
   | Contain Contains
   | Cursor Cursors
   | Direction Direction
@@ -2049,8 +2063,8 @@ data StyleProperty =
   | FlexWrap FlexWrap
   | Float Float'
   | FontFamily FontFamilies
-  -- TODO content
-  -- TODO counter-increment, counter-reset
+  | FontKerning FontKerning
+  -- TODO font-feature-settings
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -2147,6 +2161,7 @@ instance ToCSS StyleProperty where
     FlexWrap x -> "flex-wrap: " <> toCSS x
     Float x -> "float: " <> toCSS x
     FontFamily x -> "font-family: " <> toCSS x
+    FontKerning x -> "font-kerning: " <> toCSS x
 
 
 type Style = [StyleProperty]
