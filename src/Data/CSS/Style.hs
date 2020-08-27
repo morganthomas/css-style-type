@@ -13,6 +13,7 @@ module Data.CSS.Style
 
 
 import Data.Maybe (maybeToList)
+import Data.String
 import Data.Text
 import GHC.Generics
 
@@ -781,7 +782,10 @@ instance ToCSS [FilterFunction] where
 
 
 newtype FilterUrl = FilterUrl Text
-  deriving (Eq, Ord, Generic, Read, Show, ToCSS)
+  deriving (Eq, Ord, Generic, Read, Show, IsString)
+
+instance ToCSS FilterUrl where
+  toCSS (FilterUrl x) = "url(\"" <> x <> "\")"
 
 
 data Filter = FilterFunctions [FilterFunction]
@@ -909,8 +913,28 @@ instance ToCSS BackgroundClip where
     BackgroundClipUnset -> "unset"
 
 
+data BackgroundOrigin =
+    BackgroundOriginBorderBox
+  | BackgroundOriginPaddingBox
+  | BackgroundOriginInherit
+  | BackgroundOriginInitial
+  | BackgroundOriginUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BackgroundOrigin where
+  toCSS = \case
+    BackgroundOriginBorderBox -> "border-box"
+    BackgroundOriginPaddingBox -> "padding-box"
+    BackgroundOriginInherit -> "inherit"
+    BackgroundOriginInitial -> "initial"
+    BackgroundOriginUnset -> "unset"
+
+
 newtype ImageUrl = ImageUrl Text
-  deriving (Eq, Ord, Generic, Read, Show, ToCSS)
+  deriving (Eq, Ord, Generic, Read, Show, IsString)
+
+instance ToCSS ImageUrl where
+  toCSS (ImageUrl x) = "url(\"" <> x <> "\")"
 
 
 data LeftOrRight = Left' | Right'
@@ -1102,6 +1126,111 @@ instance ToCSS Gradient where
     GradientConic x -> toCSS x
 
 
+data Image = ImageGradient Gradient
+           | ImageByUrl ImageUrl
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Image where
+  toCSS = \case
+    ImageGradient x -> toCSS x
+    ImageByUrl x -> toCSS x
+
+
+data BackgroundRepeat0 = Repeat | RepeatSpace | RepeatRound | NoRepeat
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BackgroundRepeat0 where
+  toCSS = \case
+    Repeat -> "repeat"
+    RepeatSpace -> "space"
+    RepeatRound -> "round"
+    NoRepeat -> "no-repeat"
+
+
+data BackgroundRepeat = RepeatXY BackgroundRepeat0 BackgroundRepeat0
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BackgroundRepeat where
+  toCSS (RepeatXY x y) = toCSS x <> " " <> toCSS y
+
+
+data BackgroundSize = BackgroundSizeCover
+                    | BackgroundSizeContain
+                    | BackgroundSizeAuto
+                    | BackgroundSize1to1 Dimension
+                    | BackgroundSizeNon1to1 Dimension Dimension
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BackgroundSize where
+  toCSS = \case
+     BackgroundSizeCover -> "cover"
+     BackgroundSizeContain -> "contain"
+     BackgroundSizeAuto -> "auto"
+     BackgroundSize1to1 x -> toCSS x
+     BackgroundSizeNon1to1 x y -> toCSS x <> " " <> toCSS y
+
+
+data BackgroundSizes = BackgroundSizes [BackgroundSize]
+                     | BackgroundSizesInherit
+                     | BackgroundSizesInitial
+                     | BackgroundSizesUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BackgroundSizes where
+  toCSS = \case
+    BackgroundSizes x -> listToCSS x
+    BackgroundSizesInherit -> "inherit"
+    BackgroundSizesInitial -> "initial"
+    BackgroundSizesUnset -> "unset"
+
+
+data Size = SizeLength Length
+          | SizePercent Percent
+          | SizeAuto
+          | SizeMaxContent
+          | SizeMinContent
+          | SizeFitContent Dimension
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Size where
+  toCSS = \case
+    SizeLength x -> toCSS x
+    SizePercent x -> toCSS x
+    SizeAuto -> "auto"
+    SizeMaxContent -> "max-content"
+    SizeMinContent -> "min-content"
+    SizeFitContent x -> "fit-content(" <> toCSS x <> ")"
+
+data Radius = Circular Dimension
+            | EllipticalXY Dimension Dimension
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Radius where
+  toCSS = \case
+    Circular x -> toCSS x
+    EllipticalXY x y -> toCSS x <> " " <> toCSS y
+
+
+data BorderWidth = BorderThin
+                 | BorderMedium
+                 | BorderThick
+                 | BorderThickness Length
+                 | BorderWidthInherit
+                 | BorderWidthInitial
+                 | BorderWidthUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BorderWidth where
+  toCSS = \case
+    BorderThin -> "thin"
+    BorderMedium -> "medium"
+    BorderThick -> "thick"
+    BorderThickness x -> toCSS x
+    BorderWidthInherit -> "inherit"
+    BorderWidthInitial -> "initial"
+    BorderWidthUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1121,6 +1250,16 @@ data StyleProperty =
   | BackgroundBlendMode BlendModes
   | BackgroundClip BackgroundClip
   | BackgroundColor Color
+  | BackgroundImage Image
+  | BackgroundOrigin BackgroundOrigin
+  | BackgroundPosition Position
+  | BackgroundRepeat BackgroundRepeat
+  | BackgroundSize BackgroundSizes
+  | BlockSize Size
+  | BorderBottomColor Color
+  | BorderBottomLeftRadius Radius
+  | BorderBottomRightRadius Radius
+  | BorderBottomWidth BorderWidth
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1143,6 +1282,16 @@ instance ToCSS StyleProperty where
     BackgroundBlendMode x -> "background-blend-mode: " <> toCSS x
     BackgroundClip x -> "background-clip: " <> toCSS x
     BackgroundColor x -> "background-color: " <> toCSS x
+    BackgroundImage x -> "background-image: " <> toCSS x
+    BackgroundOrigin x -> "background-origin: " <> toCSS x
+    BackgroundPosition x -> "background-position: " <> toCSS x
+    BackgroundRepeat x -> "background-repeat: " <> toCSS x
+    BackgroundSize x -> "background-size: " <> toCSS x
+    BlockSize x -> "block-size: " <> toCSS x
+    BorderBottomColor x -> "border-bottom-color: " <> toCSS x
+    BorderBottomLeftRadius x -> "border-bottom-left-radius: " <> toCSS x
+    BorderBottomRightRadius x -> "border-bottom-right-radius: " <> toCSS x
+    BorderBottomWidth x -> "border-bottom-width: " <> toCSS x
 
 
 type Style = [StyleProperty]
