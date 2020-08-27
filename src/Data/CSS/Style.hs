@@ -1864,6 +1864,38 @@ instance ToCSS FlexGrow where
     FlexGrowUnset -> "unset"
 
 
+data FlexShrink = FlexShrinkBy Proportion
+                | FlexShrinkInherit
+                | FlexShrinkInitial
+                | FlexShrinkUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FlexShrink where
+  toCSS = \case
+    FlexShrinkBy x -> toCSS x
+    FlexShrinkInherit -> "inherit"
+    FlexShrinkInitial -> "initial"
+    FlexShrinkUnset -> "unset"
+
+
+data FlexWrap = FlexWrapNo
+              | FlexWrapYes
+              | FlexWrapReverse
+              | FlexWrapInherit
+              | FlexWrapInitial
+              | FlexWrapUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS FlexWrap where
+  toCSS = \case
+    FlexWrapNo -> "nowrap"
+    FlexWrapYes -> "wrap"
+    FlexWrapReverse -> "reverse"
+    FlexWrapInherit -> "inherit"
+    FlexWrapInitial -> "initial"
+    FlexWrapUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1956,6 +1988,8 @@ data StyleProperty =
   | FlexBasis FlexSize
   | FlexDirection FlexDirection
   | FlexGrow FlexGrow
+  | FlexShrink FlexShrink
+  | FlexWrap FlexWrap
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -2050,6 +2084,8 @@ instance ToCSS StyleProperty where
     FlexBasis x -> "flex-basis: " <> toCSS x
     FlexDirection x -> "flex-direction: " <> toCSS x
     FlexGrow x -> "flex-grow: " <> toCSS x
+    FlexShrink x -> "flex-shrink: " <> toCSS x
+    FlexWrap x -> "flex-wrap: " <> toCSS x
 
 
 type Style = [StyleProperty]
