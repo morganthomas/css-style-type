@@ -3,6 +3,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE StandaloneDeriving         #-}
 
 
 module Data.CSS.Style
@@ -11,6 +12,7 @@ module Data.CSS.Style
   ) where
 
 
+import Data.Maybe (maybeToList)
 import Data.Text
 import GHC.Generics
 
@@ -37,6 +39,11 @@ instance ToCSS Double where
 
 listToCSS :: ToCSS a => [a] -> Text
 listToCSS = intercalate ", " . fmap toCSS
+
+
+maybeToCSS :: ToCSS a => Maybe a -> Text
+maybeToCSS Nothing = ""
+maybeToCSS (Just x) = toCSS x
 
 
 data AlignContent = AlignContentStart
@@ -379,9 +386,14 @@ instance ToCSS Length where
     Zero -> "0"
 
 
+newtype Percent = Percent Double
+  deriving (Eq, Ord, Num, Fractional, Real, RealFrac, Floating, RealFloat, Generic, Read, Show, ToCSS)
+
+
 data Dimension =
     LengthDim Length
-  | PercentDim Double
+  | PercentDim Percent
+  deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS Dimension where
   toCSS = \case
@@ -394,6 +406,10 @@ data Color = RGB Double Double Double
            | HSL Double Double Double
            | HSLA Double Double Double Double
            | HexColor Text
+           | UnsetColor
+           | InheritColor
+           | InitialColor
+           | CurrentColor
            | Transparent
            | Black
            | Silver
@@ -551,6 +567,10 @@ instance ToCSS Color where
     HSLA h s l a -> "hsla(" <> intercalate ", " (toCSS <$> [h, s, l, a]) <> ")"
     HexColor x -> "#" <> x
     Transparent -> "transparent"
+    InitialColor -> "initial"
+    InheritColor -> "inherit"
+    UnsetColor -> "unset"
+    CurrentColor -> "currentColor"
     Black -> "black"
     Silver -> "silver"
     Gray -> "gray"
@@ -889,6 +909,171 @@ instance ToCSS BackgroundClip where
     BackgroundClipUnset -> "unset"
 
 
+newtype ImageUrl = ImageUrl Text
+  deriving (Eq, Ord, Generic, Read, Show, ToCSS)
+
+
+data LeftOrRight = Left' | Right'
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS LeftOrRight where
+  toCSS = \case
+    Left' -> "left"
+    Right' -> "right"
+
+
+data TopOrBottom = Top | Bottom
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS TopOrBottom where
+  toCSS = \case
+    Top -> "top"
+    Bottom -> "bottom"
+
+
+data GradientAngle =
+    GradientAngle Angle
+  | GradientTo (Maybe LeftOrRight) (Maybe TopOrBottom)
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GradientAngle where
+  toCSS = \case
+    GradientAngle x -> toCSS x
+    GradientTo lr tb -> "to " <> maybeToCSS lr 
+                       <> " " <> maybeToCSS tb
+
+
+data LinearColorStop = LinearColorStop
+                     { lcsColor :: Color
+                     , lcsStop0 :: Maybe Dimension
+                     , lcsStop1 :: Maybe Dimension }
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS LinearColorStop where
+  toCSS (LinearColorStop c s0 s1) = toCSS c <> " "
+    <> maybeToCSS s0 <> " " <> maybeToCSS s1
+
+
+data Position0 = PositionTop
+               | PositionBottom
+               | PositionLeft
+               | PositionRight
+               | PositionCenter
+               | PositionDim Dimension
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Position0 where
+  toCSS = \case
+    PositionTop -> "top"
+    PositionBottom -> "bottom"
+    PositionLeft -> "left"
+    PositionRight -> "right"
+    PositionCenter -> "center"
+    PositionDim x -> toCSS x
+
+
+data Position = Position1 Position0
+              | Position2 Position0 Position0
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Position where
+  toCSS = \case
+    Position1 x -> toCSS x
+    Position2 x y -> toCSS x <> " " <> toCSS y
+
+
+data Positions = Positions [Position]
+               | PositionsInherit
+               | PositionsUnset
+               | PositionsInitial
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Positions where
+  toCSS = \case
+    Positions x -> listToCSS x
+    PositionsInherit -> "inherit"
+    PositionsInitial -> "initial"
+    PositionsUnset -> "unset"
+
+
+data RadialShape = Circle | Ellipse
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS RadialShape where
+  toCSS = \case
+    Circle -> "circle"
+    Ellipse -> "ellipse"
+
+
+data RadialShapeExtent =
+  ClosestSide | ClosestCorner | FarthestSide | FarthestCorner
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS RadialShapeExtent where
+  toCSS = \case
+    ClosestSide -> "closest-side"
+    ClosestCorner -> "closest-corner"
+    FarthestSide -> "farthest-side"
+    FarthestCorner -> "farthest-corner"
+
+
+data LinearGradient = LinearGradient
+  { lgAngle :: Maybe GradientAngle
+  , lgStops :: [LinearColorStop] }
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS LinearGradient where
+  toCSS (LinearGradient angle stops) =
+      "linear-gradient(" <>
+      ( listToCSS $
+        maybeToList (toCSS <$> angle) <>
+                    (toCSS <$> stops) )
+      <> ")"
+
+
+data RadialGradient = RadialGradient
+  { rgPosition :: Maybe Position
+  , rgShape    :: Maybe RadialShape
+  , rgExtent   :: Maybe RadialShapeExtent
+  , rgStops    :: [LinearColorStop] }
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS RadialGradient where
+  toCSS  (RadialGradient pos shape extent stops) =
+    "radial-gradient(" <>
+    ( intercalate " " $
+      maybeToList (toCSS <$> shape) <>
+      maybeToList (("at " <>) . toCSS <$> pos) <>
+      maybeToList (toCSS <$> extent) ) <>
+    ( listToCSS (toCSS <$> stops) ) <> ")"
+
+
+newtype RepeatingGradient g = Repeating g
+deriving instance Eq g => Eq (RepeatingGradient g)
+deriving instance Ord g => Ord (RepeatingGradient g)
+deriving instance Generic g => Generic (RepeatingGradient g)
+deriving instance Read g => Read (RepeatingGradient g)
+deriving instance Show g => Show (RepeatingGradient g)
+
+instance ToCSS g => ToCSS (RepeatingGradient g) where
+  toCSS (Repeating x) = "repeating-" <> toCSS x
+
+
+data Gradient = GradientLinear LinearGradient
+              | GradientRadial RadialGradient
+              | GradientRepeatingLinear (RepeatingGradient LinearGradient)
+              | GradientRepeatingRadial (RepeatingGradient RadialGradient)
+  -- TODO
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Gradient where
+  toCSS = \case
+    GradientLinear x -> toCSS x
+    GradientRadial x -> toCSS x
+    GradientRepeatingLinear x -> toCSS x
+    GradientRepeatingRadial x -> toCSS x
+        
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -907,6 +1092,7 @@ data StyleProperty =
   | BackgroundAttachment BackgroundAttachments
   | BackgroundBlendMode BlendModes
   | BackgroundClip BackgroundClip
+  | BackgroundColor Color
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -928,6 +1114,7 @@ instance ToCSS StyleProperty where
     BackgroundAttachment x -> "background-attachment: " <> toCSS x
     BackgroundBlendMode x -> "background-blend-mode: " <> toCSS x
     BackgroundClip x -> "background-clip: " <> toCSS x
+    BackgroundColor x -> "background-color: " <> toCSS x
 
 
 type Style = [StyleProperty]
