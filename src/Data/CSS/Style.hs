@@ -1896,6 +1896,28 @@ instance ToCSS FlexWrap where
     FlexWrapUnset -> "unset"
 
 
+data Float' = FloatLeft
+            | FloatRight
+            | FloatNone
+            | FloatInlineStart
+            | FloatInlineEnd
+            | FloatInherit
+            | FloatInitial
+            | FloatUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS Float' where
+  toCSS = \case
+    FloatLeft -> "left"
+    FloatRight -> "right"
+    FloatNone -> "none"
+    FloatInlineStart -> "inline-start"
+    FloatInlineEnd -> "inline-end"
+    FloatInherit -> "inherit"
+    FloatInitial -> "initial"
+    FloatUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1990,6 +2012,7 @@ data StyleProperty =
   | FlexGrow FlexGrow
   | FlexShrink FlexShrink
   | FlexWrap FlexWrap
+  | Float Float'
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -2086,6 +2109,7 @@ instance ToCSS StyleProperty where
     FlexGrow x -> "flex-grow: " <> toCSS x
     FlexShrink x -> "flex-shrink: " <> toCSS x
     FlexWrap x -> "flex-wrap: " <> toCSS x
+    Float x -> "float: " <> toCSS x
 
 
 type Style = [StyleProperty]
