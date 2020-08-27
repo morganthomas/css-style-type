@@ -1850,6 +1850,20 @@ instance ToCSS FlexDirection where
     FlexDirectionUnset -> "unset"
 
 
+data FlexGrow = FlexGrowBy Proportion
+              | FlexGrowInherit
+              | FlexGrowInitial
+              | FlexGrowUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FlexGrow where
+  toCSS = \case
+    FlexGrowBy x -> toCSS x
+    FlexGrowInherit -> "inherit"
+    FlexGrowInitial -> "initial"
+    FlexGrowUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1941,6 +1955,7 @@ data StyleProperty =
   | Filter Filter
   | FlexBasis FlexSize
   | FlexDirection FlexDirection
+  | FlexGrow FlexGrow
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -2034,6 +2049,7 @@ instance ToCSS StyleProperty where
     Filter x -> "filter: " <> toCSS x
     FlexBasis x -> "flex-basis: " <> toCSS x
     FlexDirection x -> "flex-direction: " <> toCSS x
+    FlexGrow x -> "flex-grow: " <> toCSS x
 
 
 type Style = [StyleProperty]
