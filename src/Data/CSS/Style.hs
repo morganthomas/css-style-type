@@ -1553,6 +1553,15 @@ instance ToCSS ColumnGap where
     ColumnGapUnset -> "unset"
 
 
+data ColumnSpan = ColumnSpanNone | ColumnSpanAll
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS ColumnSpan where
+  toCSS = \case
+    ColumnSpanNone -> "none"
+    ColumnSpanAll -> "all"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1634,6 +1643,7 @@ data StyleProperty =
   | ColumnRuleColor Color
   | ColumnRuleStyle BorderStyle
   | ColumnRuleWidth BorderWidth
+  | ColumnSpan ColumnSpan
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1715,6 +1725,7 @@ instance ToCSS StyleProperty where
     ColumnRuleColor x -> "column-rule-color: " <> toCSS x
     ColumnRuleStyle x -> "column-rule-style: " <> toCSS x
     ColumnRuleWidth x -> "column-rule-width: " <> toCSS x
+    ColumnSpan x -> "column-span: " <> toCSS x
 
 
 type Style = [StyleProperty]
