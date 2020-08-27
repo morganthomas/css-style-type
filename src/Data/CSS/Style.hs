@@ -1801,6 +1801,34 @@ instance ToCSS EmptyCells where
     EmptyCellsUnset -> "unset"
 
 
+data FlexSize = FlexSizeLength Length
+              | FlexSizePercent Percent
+              | FlexSizeAuto
+              | FlexSizeFill
+              | FlexSizeMaxContent
+              | FlexSizeMinContent
+              | FlexSizeFitContent
+              | FlexSizeContent
+              | FlexSizeInherit
+              | FlexSizeInitial
+              | FlexSizeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FlexSize where
+  toCSS = \case
+    FlexSizeLength x -> toCSS x
+    FlexSizePercent x -> toCSS x
+    FlexSizeAuto -> "auto"
+    FlexSizeFill -> "fill"
+    FlexSizeMaxContent -> "max-content"
+    FlexSizeMinContent -> "min-content"
+    FlexSizeFitContent -> "fit-content"
+    FlexSizeContent -> "content"
+    FlexSizeInherit -> "inherit"
+    FlexSizeInitial -> "initial"
+    FlexSizeUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1890,6 +1918,7 @@ data StyleProperty =
   | Display Display
   | EmptyCells EmptyCells
   | Filter Filter
+  | FlexBasis FlexSize
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -1981,6 +2010,7 @@ instance ToCSS StyleProperty where
     Display x -> "display: " <> toCSS x
     EmptyCells x -> "empty-cells: " <> toCSS x
     Filter x -> "filter: " <> toCSS x
+    FlexBasis x -> "flex-basis: " <> toCSS x
 
 
 type Style = [StyleProperty]
