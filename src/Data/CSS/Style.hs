@@ -946,13 +946,13 @@ instance ToCSS LeftOrRight where
     Right' -> "right"
 
 
-data TopOrBottom = Top | Bottom
+data TopOrBottom = Top' | Bottom'
   deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
 
 instance ToCSS TopOrBottom where
   toCSS = \case
-    Top -> "top"
-    Bottom -> "bottom"
+    Top' -> "top"
+    Bottom' -> "bottom"
 
 
 data GradientAngle =
@@ -1317,6 +1317,68 @@ instance ToCSS BorderImageOutset where
     OutsetMultiple x -> toCSS x
 
 
+data BorderSpacing =
+    BorderSpacingUniform Length
+  | BorderSpacingHorizontalVertical Length Length
+  | BorderSpacingInitial
+  | BorderSpacingInherit
+  | BorderSpacingUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BorderSpacing where
+  toCSS = \case
+    BorderSpacingUniform x -> toCSS x
+    BorderSpacingHorizontalVertical x y ->
+     toCSS x <> " " <> toCSS y
+    BorderSpacingInitial -> "initial"
+    BorderSpacingInherit -> "inherit"
+    BorderSpacingUnset -> "unset"
+
+
+data Offset = OffsetLength Length
+            | OffsetPercent Percent
+            | OffsetAuto
+            | OffsetInherit
+            | OffsetInitial
+            | OffsetUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Offset where
+  toCSS = \case
+    OffsetLength x -> toCSS x
+    OffsetPercent x -> toCSS x
+    OffsetAuto -> "auto"
+    OffsetInherit -> "inherit"
+    OffsetInitial -> "initial"
+    OffsetUnset -> "unset"
+
+
+data BoxDecorationBreak =
+    BreakSlice
+  | BreakClone
+  | BreakInitial
+  | BreakInherit
+  | BreakUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BoxDecorationBreak where
+  toCSS = \case
+    BreakSlice -> "slice"
+    BreakClone -> "clone"
+    BreakInitial -> "intiial"
+    BreakInherit -> "inherit"
+    BreakUnset -> "unset"
+
+
+data BoxSizing = BorderBox | ContentBox
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BoxSizing where
+  toCSS = \case
+    BorderBox -> "border-box"
+    ContentBox -> "content-box"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1357,6 +1419,33 @@ data StyleProperty =
   | BorderInlineColor Color
   | BorderInlineEndColor Color
   | BorderInlineEndStyle BorderStyle
+  | BorderInlineEndWidth BorderWidth
+  | BorderInlineStartColor Color
+  | BorderInlineStartStyle BorderStyle
+  | BorderInlineStartWidth BorderWidth
+  | BorderInlineWidth BorderWidth
+  | BorderLeftColor Color
+  | BorderLeftStyle BorderStyle
+  | BorderLeftWidth BorderWidth
+  | BorderRadius Radius
+  | BorderRightColor Color
+  | BorderRightStyle BorderStyle
+  | BorderRightWidth BorderWidth
+  | BorderSpacing BorderSpacing
+  | BorderStartEndRadius Radius
+  | BorderStartStartRadius Radius
+  | BorderStyle BorderStyle
+  | BorderTopColor Color
+  | BorderTopLeftRadius Radius
+  | BorderTopRightRadius Radius
+  | BorderTopStyle BorderStyle
+  | BorderTopWidth BorderWidth
+  | BorderWidth BorderWidth
+  | BottomOffset Offset
+  | BoxDecorationBreak BoxDecorationBreak
+  -- TODO box-shadow
+  | BoxSizing BoxSizing
+  
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1399,6 +1488,31 @@ instance ToCSS StyleProperty where
     BorderInlineColor x -> "border-inline-color: " <> toCSS x
     BorderInlineEndColor x -> "border-inline-end-color: " <> toCSS x
     BorderInlineEndStyle x -> "border-inline-end-style: " <> toCSS x
+    BorderInlineEndWidth x -> "border-inline-end-width: " <> toCSS x
+    BorderInlineStartColor x -> "border-inline-start-color: " <> toCSS x
+    BorderInlineStartStyle x -> "border-inline-start-style: " <> toCSS x
+    BorderInlineStartWidth x -> "border-inline-start-wdith: " <> toCSS x
+    BorderInlineWidth x -> "border-inline-width: " <> toCSS x
+    BorderLeftColor x -> "border-left-color: " <> toCSS x
+    BorderLeftStyle x -> "border-left-style: " <> toCSS x
+    BorderLeftWidth x -> "border-left-width: " <> toCSS x
+    BorderRadius x -> "border-radisu: " <> toCSS x
+    BorderRightColor x -> "border-right-color: " <> toCSS x
+    BorderRightStyle x -> "border-right-style: " <> toCSS x
+    BorderRightWidth x -> "border-right-width: " <> toCSS x
+    BorderSpacing x -> "border-spacing: " <> toCSS x
+    BorderStartEndRadius x -> "border-start-end-radius: " <> toCSS x
+    BorderStartStartRadius x -> "border-start-start-radius:" <> toCSS x
+    BorderStyle x -> "border-style: " <> toCSS x
+    BorderTopColor x -> "border-top-color: " <> toCSS x
+    BorderTopLeftRadius x -> "border-top-left-radius: " <> toCSS x
+    BorderTopRightRadius x -> "border-top-right-radius: " <> toCSS x
+    BorderTopStyle x -> "border-top-style: " <> toCSS x
+    BorderTopWidth x -> "border-top-width: " <> toCSS x
+    BorderWidth x -> "border-width: " <> toCSS x
+    BottomOffset x -> "bottom: " <> toCSS x
+    BoxDecorationBreak x -> "box-decoration-break: " <> toCSS x
+    BoxSizing x -> "box-sizing: " <> toCSS x
 
 
 type Style = [StyleProperty]
