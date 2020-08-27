@@ -1441,6 +1441,99 @@ instance ToCSS BreakInside where
     BreakInsideUnset -> "unset"
 
 
+data CaptionSide =
+    CaptionTop
+  | CaptionBottom
+  | CaptionLeft
+  | CaptionRight
+  | CaptionTopOutside
+  | CaptionBottomOutside
+  | CaptionSideInherit
+  | CaptionSideInitial
+  | CaptionSideUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS CaptionSide where
+  toCSS = \case
+    CaptionTop -> "top"
+    CaptionBottom -> "bottom"
+    CaptionLeft -> "left"
+    CaptionRight -> "right"
+    CaptionTopOutside -> "top-outside"
+    CaptionBottomOutside -> "bottom-outside"
+    CaptionSideInherit -> "inherit"
+    CaptionSideInitial -> "initial"
+    CaptionSideUnset -> "unset"
+
+
+data Clear =
+    ClearNone
+  | ClearLeft
+  | ClearRight
+  | ClearBoth
+  | ClearInlineStart
+  | ClearInlineEnd
+  | ClearInherit
+  | ClearInitial
+  | ClearUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS Clear where
+  toCSS = \case
+    ClearNone -> "none"
+    ClearLeft -> "left"
+    ClearRight -> "right"
+    ClearBoth -> "both"
+    ClearInlineStart -> "inline-start"
+    ClearInlineEnd -> "inline-end"
+    ClearInherit -> "inherit"
+    ClearInitial -> "initial"
+    ClearUnset -> "unset"
+
+
+data ColorAdjust = ColorAdjustEconomy | ColorAdjustExact
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS ColorAdjust where
+  toCSS = \case
+    ColorAdjustEconomy -> "economy"
+    ColorAdjustExact -> "exact"
+
+
+data ColumnCount = ColumnCountAuto
+                 | Columns Int
+                 | ColumnCountInherit
+                 | ColumnCountInitial
+                 | ColumnCountUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ColumnCount where
+  toCSS = \case
+    ColumnCountAuto -> "auto"
+    Columns x -> toCSS x
+    ColumnCountInherit -> "inherit"
+    ColumnCountInitial -> "initial"
+    ColumnCountUnset -> "unset"
+
+
+data ColumnFill = ColumnFillAuto
+                | ColumnFillBalance
+                | ColumnFillBalanceAll
+                | ColumnFillInherit
+                | ColumnFillInitial
+                | ColumnFillUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS ColumnFill where
+  toCSS = \case
+    ColumnFillAuto -> "auto"
+    ColumnFillBalance -> "balance"
+    ColumnFillBalanceAll -> "balance-all"
+    ColumnFillInherit -> "inherit"
+    ColumnFillInitial -> "initial"
+    ColumnFillUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1510,6 +1603,14 @@ data StyleProperty =
   | BreakAfter BreakAround
   | BreakBefore BreakAround
   | BreakInside BreakInside
+  | CaptionSide CaptionSide
+  | CaretColor Color
+  | Clear Clear
+  -- TODO: clip, clip-path
+  | Color Color
+  | ColorAdjust ColorAdjust
+  | ColumnCount ColumnCount
+  | ColumnFill ColumnFill
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1580,6 +1681,13 @@ instance ToCSS StyleProperty where
     BreakAfter x -> "break-after: " <> toCSS x
     BreakBefore x -> "break-before: " <> toCSS x
     BreakInside x -> "break-inside: " <> toCSS x
+    CaptionSide x -> "caption-side: " <> toCSS x
+    CaretColor x -> "caret-color: " <> toCSS x
+    Clear x -> "clear: " <> toCSS x
+    Color x -> "color: " <> toCSS x
+    ColorAdjust x -> "color-adjust: " <> toCSS x
+    ColumnCount x -> "column-count: " <> toCSS x
+    ColumnFill x -> "column-fill: " <> toCSS x
 
 
 type Style = [StyleProperty]
