@@ -12,7 +12,7 @@ module Data.CSS.Style
   ) where
 
 
-import Data.Maybe (maybeToList)
+import Data.Maybe (fromMaybe, maybeToList)
 import Data.String
 import Data.Text
 import GHC.Generics
@@ -1616,6 +1616,101 @@ instance ToCSS Contains where
     ContainUnset -> "unset"
 
 
+data Cursor = CursorUrl Text (Maybe (Int, Int))
+            | CursorAuto
+            | CursorDefault
+            | CursorNone
+            | CursorContextMenu
+            | CursorHelp
+            | CursorPointer
+            | CursorProgress
+            | CursorWait
+            | CursorCell
+            | CursorCrosshair
+            | CursorText
+            | CursorVerticalText
+            | CursorAlias
+            | CursorCopy
+            | CursorMove
+            | CursorNoDrop
+            | CursorNotAllowed
+            | CursorGrab
+            | CursorGrabbing
+            | CursorAllScroll
+            | CursorColResize
+            | CursorRowResize
+            | CursorNResize
+            | CursorEResize
+            | CursorSResize
+            | CursorWResize
+            | CursorNEResize
+            | CursorNWResize
+            | CursorSEResize
+            | CursorSWResize
+            | CursorEWResize
+            | CursorNSResize
+            | CursorNESWResize
+            | CursorNWSEResize
+            | CursorZoomIn
+            | CursorZoomOut
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Cursor where
+  toCSS = \case
+    CursorUrl u cs -> "url(" <> u <> ")" <>
+      fromMaybe "" ((" " <>) . (\(x,y) -> toCSS x <> " " <> toCSS y) <$> cs)
+    CursorAuto -> "auto"
+    CursorDefault -> "default"
+    CursorNone -> "none"
+    CursorContextMenu -> "context-menu"
+    CursorHelp -> "help"
+    CursorPointer -> "pointer"
+    CursorProgress -> "progress"
+    CursorWait -> "wait"
+    CursorCell -> "cell"
+    CursorCrosshair -> "crosshair"
+    CursorText -> "text"
+    CursorVerticalText -> "vertical-text"
+    CursorAlias -> "alias"
+    CursorCopy -> "copy"
+    CursorMove -> "move"
+    CursorNoDrop -> "no-drop"
+    CursorNotAllowed -> "not-allowed"
+    CursorGrab -> "grab"
+    CursorGrabbing -> "grabbing"
+    CursorAllScroll -> "all-scroll"
+    CursorColResize -> "col-resize"
+    CursorRowResize -> "row-resize"
+    CursorNResize -> "n-resize"
+    CursorEResize -> "e-resize"
+    CursorSResize -> "s-resize"
+    CursorWResize -> "w-resize"
+    CursorNEResize -> "ne-resize"
+    CursorNWResize -> "nw-resize"
+    CursorSEResize -> "se-resize"
+    CursorSWResize -> "sw-resize"
+    CursorEWResize -> "ew-resize"
+    CursorNSResize -> "ns-resize"
+    CursorNESWResize -> "nesw-resize"
+    CursorNWSEResize -> "nwrse-resize"
+    CursorZoomIn -> "zoom-in"
+    CursorZoomOut -> "zoom-out"
+
+
+data Cursors = Cursors [Cursor]
+             | CursorInitial
+             | CursorInherit
+             | CursorUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Cursors where
+  toCSS = \case
+    Cursors x -> listToCSS x
+    CursorInitial -> "initial"
+    CursorInherit -> "inherit"
+    CursorUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1700,6 +1795,9 @@ data StyleProperty =
   | ColumnSpan ColumnSpan
   | ColumnWidth ColumnWidth
   | Contain Contains
+  | Cursor Cursors
+  -- TODO content
+  -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1784,6 +1882,7 @@ instance ToCSS StyleProperty where
     ColumnSpan x -> "column-span: " <> toCSS x
     ColumnWidth x -> "column-width: " <> toCSS x
     Contain x -> "contain: " <> toCSS x
+    Cursor x -> "cursor: " <> toCSS x
 
 
 type Style = [StyleProperty]
