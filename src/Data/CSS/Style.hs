@@ -1128,12 +1128,18 @@ instance ToCSS Gradient where
 
 data Image = ImageGradient Gradient
            | ImageByUrl ImageUrl
+           | ImageInherit
+           | ImageInitial
+           | ImageUnset
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS Image where
   toCSS = \case
     ImageGradient x -> toCSS x
     ImageByUrl x -> toCSS x
+    ImageInitial -> "initial"
+    ImageInherit -> "inherit"
+    ImageUnset -> "unset"
 
 
 data BackgroundRepeat0 = Repeat | RepeatSpace | RepeatRound | NoRepeat
@@ -1148,10 +1154,17 @@ instance ToCSS BackgroundRepeat0 where
 
 
 data BackgroundRepeat = RepeatXY BackgroundRepeat0 BackgroundRepeat0
+                      | RepeatInitial
+                      | RepeatInherit
+                      | RepeatUnset
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS BackgroundRepeat where
-  toCSS (RepeatXY x y) = toCSS x <> " " <> toCSS y
+  toCSS = \case
+    RepeatXY x y -> toCSS x <> " " <> toCSS y
+    RepeatInitial -> "initial"
+    RepeatInherit -> "inherit"
+    RepeatUnset -> "unset"
 
 
 data BackgroundSize = BackgroundSizeCover
@@ -1201,6 +1214,60 @@ instance ToCSS Size where
     SizeMinContent -> "min-content"
     SizeFitContent x -> "fit-content(" <> toCSS x <> ")"
 
+
+data BorderSizes = UniformBorderSize Size
+                 | VerticalHorizontalBorderSizes Size Size
+                 | TopRightBottomLeftBorderSizes Size Size Size Size
+                 | BorderSizesInherit
+                 | BorderSizesInitial
+                 | BorderSizesUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BorderSizes where
+  toCSS = \case
+    UniformBorderSize x -> toCSS x
+    VerticalHorizontalBorderSizes x y -> toCSS x <> " " <> toCSS y
+    TopRightBottomLeftBorderSizes a b c d ->
+      intercalate " " $ toCSS <$> [a, b, c, d]
+    BorderSizesInherit -> "inherit"
+    BorderSizesInitial -> "initial"
+    BorderSizesUnset -> "unset"
+
+
+data BorderStyle =
+    BorderNone
+  | BorderHidden
+  | BorderDotted
+  | BorderDashed
+  | BorderSolid
+  | BorderDouble
+  | BorderGroove
+  | BorderRidge
+  | BorderInset
+  | BorderOutset
+  | BorderStyleInherit
+  | BorderStyleInitial
+  | BorderStyleUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BorderStyle where
+  toCSS = \case
+    BorderNone -> "none"
+    BorderHidden -> "hidden"
+    BorderDotted -> "dotted"
+    BorderDashed -> "dashed"
+    BorderSolid -> "solid"
+    BorderDouble -> "double"
+    BorderGroove -> "groove"
+    BorderRidge -> "ridge"
+    BorderInset -> "inset"
+    BorderOutset -> "outset"
+    BorderStyleInherit -> "inherit"
+    BorderStyleInitial -> "initial"
+    BorderStyleUnset -> "unset"
+  
+
+
 data Radius = Circular Dimension
             | EllipticalXY Dimension Dimension
   deriving (Eq, Ord, Generic, Read, Show)
@@ -1229,6 +1296,25 @@ instance ToCSS BorderWidth where
     BorderWidthInherit -> "inherit"
     BorderWidthInitial -> "initial"
     BorderWidthUnset -> "unset"
+
+
+data BorderCollapse = CollapseBorders | SeparateBorders
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS BorderCollapse where
+  toCSS = \case
+    CollapseBorders -> "collapse"
+    SeparateBorders -> "separate"
+
+
+data BorderImageOutset = OutsetLength Length
+                       | OutsetMultiple Double
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BorderImageOutset where
+  toCSS = \case
+    OutsetLength x -> toCSS x
+    OutsetMultiple x -> toCSS x
 
 
 data StyleProperty =
@@ -1260,6 +1346,17 @@ data StyleProperty =
   | BorderBottomLeftRadius Radius
   | BorderBottomRightRadius Radius
   | BorderBottomWidth BorderWidth
+  | BorderCollapse BorderCollapse
+  | BorderColor Color
+  | BorderEndEndRadius Radius
+  | BorderEndStartRadius Radius
+  | BorderImageOutset BorderImageOutset
+  | BorderImageRepeat BackgroundRepeat
+  | BorderImageSource Image
+  | BorderImageWidth BorderSizes
+  | BorderInlineColor Color
+  | BorderInlineEndColor Color
+  | BorderInlineEndStyle BorderStyle
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1292,6 +1389,16 @@ instance ToCSS StyleProperty where
     BorderBottomLeftRadius x -> "border-bottom-left-radius: " <> toCSS x
     BorderBottomRightRadius x -> "border-bottom-right-radius: " <> toCSS x
     BorderBottomWidth x -> "border-bottom-width: " <> toCSS x
+    BorderCollapse x -> "border-collapse: " <> toCSS x
+    BorderColor x -> "border-color: " <> toCSS x
+    BorderEndEndRadius x -> "border-end-end-radius: " <> toCSS x
+    BorderImageOutset x -> "border-image-outset: " <> toCSS x
+    BorderImageRepeat x -> "border-image-repeat: " <> toCSS x
+    BorderImageSource x -> "border-image-source: " <> toCSS x
+    BorderImageWidth x -> "border-image-width: " <> toCSS x
+    BorderInlineColor x -> "border-inline-color: " <> toCSS x
+    BorderInlineEndColor x -> "border-inline-end-color: " <> toCSS x
+    BorderInlineEndStyle x -> "border-inline-end-style: " <> toCSS x
 
 
 type Style = [StyleProperty]
