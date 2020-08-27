@@ -1918,6 +1918,41 @@ instance ToCSS Float' where
     FloatUnset -> "unset"
 
 
+newtype FontFamily = FontFamily' Text
+  deriving (Eq, Ord, Generic, Read, Show, IsString)
+
+instance ToCSS FontFamily where
+  toCSS (FontFamily' x) = case x of
+    "serif" -> "serif"
+    "sans-serif" -> "sans-serif"
+    "cursive" -> "cursive"
+    "fantasy" -> "fantasy"
+    "monospace" -> "monospace"
+    "system-ui" -> "system-ui"
+    "ui-serif" -> "ui-serif"
+    "ui-sans-serif" -> "ui-sans-serif"
+    "ui-monospace" -> "ui-monospace"
+    "ui-rounded" -> "ui-rounded"
+    "emoji" -> "emoji"
+    "math" -> "math"
+    "fangsong" -> "fangsong"
+    _ -> "\"" <> x <> "\""
+
+
+data FontFamilies = FontFamilies [FontFamily]
+                  | FontFamilyInitial
+                  | FontFamilyInherit
+                  | FontFamilyUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontFamilies where
+  toCSS = \case
+    FontFamilies x -> listToCSS x
+    FontFamilyInitial -> "initial"
+    FontFamilyInherit -> "inherit"
+    FontFamilyUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -2013,6 +2048,7 @@ data StyleProperty =
   | FlexShrink FlexShrink
   | FlexWrap FlexWrap
   | Float Float'
+  | FontFamily FontFamilies
   -- TODO content
   -- TODO counter-increment, counter-reset
   deriving (Eq, Ord, Generic, Read, Show)
@@ -2110,6 +2146,7 @@ instance ToCSS StyleProperty where
     FlexShrink x -> "flex-shrink: " <> toCSS x
     FlexWrap x -> "flex-wrap: " <> toCSS x
     Float x -> "float: " <> toCSS x
+    FontFamily x -> "font-family: " <> toCSS x
 
 
 type Style = [StyleProperty]
