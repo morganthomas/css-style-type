@@ -1581,6 +1581,41 @@ instance ToCSS ColumnWidth where
     ColumnWidthUnset -> "unset"
 
 
+data Contain =
+    ContainNone
+  | ContainStrict
+  | ContainContent
+  | ContainSize
+  | ContainLayout
+  | ContainStyle
+  | ContainPaint
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS Contain where
+  toCSS = \case
+    ContainNone -> "none"
+    ContainStrict -> "strict"
+    ContainContent -> "content"
+    ContainSize -> "size"
+    ContainLayout -> "layout"
+    ContainStyle -> "style"
+    ContainPaint -> "paint"
+
+
+data Contains = Contains [Contain]
+              | ContainInherit
+              | ContainInitial
+              | ContainUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Contains where
+  toCSS = \case
+    Contains x -> listToCSS x
+    ContainInherit -> "inherit"
+    ContainInitial -> "initial"
+    ContainUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -1664,6 +1699,7 @@ data StyleProperty =
   | ColumnRuleWidth BorderWidth
   | ColumnSpan ColumnSpan
   | ColumnWidth ColumnWidth
+  | Contain Contains
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -1747,6 +1783,7 @@ instance ToCSS StyleProperty where
     ColumnRuleWidth x -> "column-rule-width: " <> toCSS x
     ColumnSpan x -> "column-span: " <> toCSS x
     ColumnWidth x -> "column-width: " <> toCSS x
+    Contain x -> "contain: " <> toCSS x
 
 
 type Style = [StyleProperty]
