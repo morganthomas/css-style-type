@@ -2387,6 +2387,8 @@ data StyleProperty =
   | FontVariantPosition FontVariantPosition
   | FontVariationSettings FontVariationSettings
   | FontWeight FontWeight
+  | Gap Dimension
+  | Gaps { rowGap :: Dimension, colGap :: Dimension }
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -2497,6 +2499,8 @@ instance ToCSS StyleProperty where
     FontVariantPosition x -> "font-variant-posiiton: " <> toCSS x
     FontVariationSettings x -> "font-variation-settings: " <> toCSS x
     FontWeight x -> "font-weight: " <> toCSS x
+    Gap x -> "gap: " <> toCSS x
+    Gaps x y -> "gap: " <> toCSS x <> " " <> toCSS y
 
 
 type Style = [StyleProperty]
