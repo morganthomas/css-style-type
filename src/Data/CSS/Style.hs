@@ -2090,6 +2090,188 @@ instance ToCSS FontSynthesis where
     FontSynthesisWeightAndStyle -> "weight style"
 
 
+data FontVariantAlternate =
+    FontHistoricalForms
+  | FontStylistic Text
+  | FontStyleset Text
+  | FontCharacterVariant Text
+  | FontSwash Text
+  | FontOrnaments Text
+  | FontAnnotation Text
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontVariantAlternate where
+  toCSS = \case
+    FontHistoricalForms -> "historical-forms"
+    FontStylistic x -> "stylistic(" <> x <> ")"
+    FontStyleset x -> "styleset(" <> x <> ")"
+    FontCharacterVariant x -> "character-variant(" <> x <> ")"
+    FontSwash x -> "swash(" <> x <> ")"
+    FontOrnaments x -> "ornaments(" <> x <> ")"
+    FontAnnotation x -> "annotation(" <> x <> ")"
+
+instance ToCSS [FontVariantAlternate] where
+  toCSS = \case
+    [] -> "normal"
+    xs -> intercalate " " $ toCSS <$> xs
+
+
+data FontVariantCaps =
+    FontNormalCaps
+  | FontSmallCaps
+  | FontAllSmallCaps
+  | FontPetiteCaps
+  | FontAllPetiteCaps
+  | FontUnicase
+  | FontTitlingCaps
+  | FontCapsInherit
+  | FontCapsInitial
+  | FontCapsUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS FontVariantCaps where
+  toCSS = \case
+    FontNormalCaps -> "normal"
+    FontSmallCaps -> "small-caps"
+    FontAllSmallCaps -> "all-small-caps"
+    FontPetiteCaps -> "petite-caps"
+    FontAllPetiteCaps -> "all-petite-caps"
+    FontUnicase -> "unicase"
+    FontTitlingCaps -> "titling-caps"
+    FontCapsInherit -> "inherit"
+    FontCapsInitial -> "initial"
+    FontCapsUnset -> "unset"
+
+
+data FontVariantLigatures =
+    FontLigaturesNormal
+  | FontLigaturesNone
+  | FontLigaturesCommon
+  | FontLigaturesNoCommon
+  | FontLigaturesDiscretionary
+  | FontLigaturesNoDiscretionary
+  | FontLigaturesHistorical
+  | FontLigaturesNoHistorical
+  | FontLigaturesContextual
+  | FontLigaturesNoContextual
+  | FontLigaturesInherit
+  | FontLigaturesInitial
+  | FontLigaturesUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS FontVariantLigatures where
+  toCSS = \case
+    FontLigaturesNormal -> "normal"
+    FontLigaturesNone -> "none"
+    FontLigaturesCommon -> "common-ligatures"
+    FontLigaturesNoCommon -> "no-common-ligatures"
+    FontLigaturesDiscretionary -> "discretionary-ligatures"
+    FontLigaturesNoDiscretionary -> "no-discretionary-ligatures"
+    FontLigaturesHistorical -> "historical-ligatures"
+    FontLigaturesNoHistorical -> "no-historical-ligatures"
+    FontLigaturesContextual -> "contextual"
+    FontLigaturesNoContextual -> "no-contextual"
+    FontLigaturesInherit -> "inherit"
+    FontLigaturesInitial -> "initial"
+    FontLigaturesUnset -> "unset"
+
+
+data FontVariantNumeric =
+    FontOrdinal
+  | FontSlashedZero
+  | FontLiningNums
+  | FontOldstyleNums
+  | FontProportionalNums
+  | FontTabularNums
+  | FontDiagonalFractions
+  | FontStackedFractions
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS FontVariantNumeric where
+  toCSS = \case
+    FontOrdinal -> "ordinal"
+    FontSlashedZero -> "slashed-zero"
+    FontLiningNums -> "lining-nums"
+    FontOldstyleNums -> "oldstyle-nums"
+    FontProportionalNums -> "proportional-nums"
+    FontTabularNums -> "tabular-nums"
+    FontDiagonalFractions -> "diagonal-fractions"
+    FontStackedFractions -> "stacked-fractions"
+
+data FontVariantsNumeric =
+    FontNumericVariants [FontVariantNumeric]
+  | FontVariantsNumericInitial
+  | FontVariantsNumericInherit
+  | FontVariantsNumericUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontVariantsNumeric where
+  toCSS = \case
+    FontNumericVariants [] -> "normal"
+    FontNumericVariants x -> intercalate " " $ toCSS <$> x
+    FontVariantsNumericInitial -> "initial"
+    FontVariantsNumericInherit -> "inherit"
+    FontVariantsNumericUnset -> "unset"
+
+
+data FontVariantPosition =
+    FontNormalPosition
+  | FontSubscript
+  | FontSuperscript
+  | FontPositionInherit
+  | FontPositionInitial
+  | FontPositionUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontVariantPosition where
+  toCSS = \case
+    FontNormalPosition -> "normal"
+    FontSubscript -> "sub"
+    FontSuperscript -> "super"
+    FontPositionInherit -> "inherit"
+    FontPositionInitial -> "initial"
+    FontPositionUnset -> "unset"
+
+
+data FontVariationSettings =
+    FontVariationSettingValues [(Text, Double)]
+  | FontVariationSettingsInitial
+  | FontVariationSettingsInherit
+  | FontVariationSettingsUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontVariationSettings where
+  toCSS = \case
+    FontVariationSettingValues x -> intercalate " "
+      $ (\(s,v) -> s <> " " <> pack (show v)) <$> x
+    FontVariationSettingsInitial -> "initial"
+    FontVariationSettingsInherit -> "inherit"
+    FontVariationSettingsUnset -> "unset"
+
+
+data FontWeight =
+    FontWeightNormal
+  | FontWeightBold
+  | FontWeightLighter
+  | FontWeightBolder
+  | FontWeightNumeric Int
+  | FontWeightInitial
+  | FontWeightInherit
+  | FontWeightUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontWeight where
+  toCSS = \case
+    FontWeightNormal -> "normal"
+    FontWeightBold -> "bold"
+    FontWeightLighter -> "lighter"
+    FontWeightBolder -> "bolder"
+    FontWeightNumeric x -> pack (show x)
+    FontWeightInitial -> "initial"
+    FontWeightInherit -> "inherit"
+    FontWeightUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -2197,6 +2379,14 @@ data StyleProperty =
   | FontStretch FontStretch
   | FontStyle FontStyle
   | FontSynthesis FontSynthesis
+  | FontVariantAlternates [FontVariantAlternate]
+  | FontVariantCaps FontVariantCaps
+  -- TODO font-variant-east-asian
+  | FontVariantLigatures FontVariantLigatures
+  | FontVariantNumeric FontVariantsNumeric
+  | FontVariantPosition FontVariantPosition
+  | FontVariationSettings FontVariationSettings
+  | FontWeight FontWeight
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -2300,6 +2490,13 @@ instance ToCSS StyleProperty where
     FontStretch x -> "font-stretch: " <> toCSS x
     FontStyle x -> "font-style: " <> toCSS x
     FontSynthesis x -> "font-synthesis: " <> toCSS x
+    FontVariantAlternates x -> "font-variant-alternates: " <> toCSS x
+    FontVariantCaps x -> "font-variant-caps: " <> toCSS x
+    FontVariantLigatures x -> "font-variant-ligatures: " <> toCSS x
+    FontVariantNumeric x -> "font-variant-numeric: " <> toCSS x
+    FontVariantPosition x -> "font-variant-posiiton: " <> toCSS x
+    FontVariationSettings x -> "font-variation-settings: " <> toCSS x
+    FontWeight x -> "font-weight: " <> toCSS x
 
 
 type Style = [StyleProperty]
