@@ -1965,6 +1965,131 @@ instance ToCSS FontKerning where
     KernNone -> "none"
 
 
+data FontOpticalSizing = OpticalSizingNone
+                       | OpticalSizingAuto
+                       | OpticalSizingInherit
+                       | OpticalSizingInitial
+                       | OpticalSizingUnset
+  deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
+
+instance ToCSS FontOpticalSizing where
+  toCSS = \case
+    OpticalSizingNone -> "none"
+    OpticalSizingAuto -> "auto"
+    OpticalSizingInherit -> "inherit"
+    OpticalSizingUnset -> "unset"
+
+
+data FontSize = FontXXSmall
+              | FontXSmall
+              | FontSmall
+              | FontMedium
+              | FontLarge
+              | FontXLarge
+              | FontXXLarge
+              | FontXXXLarge
+              | FontSmaller
+              | FontLarger
+              | FontDim Dimension
+              | FontSizeInherit
+              | FontSizeInitial
+              | FontSizeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontSize where
+  toCSS = \case
+    FontXXSmall -> "xx-small"
+    FontXSmall -> "x-small"
+    FontSmall -> "small"
+    FontMedium -> "medium"
+    FontLarge -> "large"
+    FontXLarge -> "x-large"
+    FontXXLarge -> "xx-large"
+    FontXXXLarge -> "xxx-large"
+    FontSmaller -> "smaller"
+    FontLarger -> "larger"
+    FontDim x -> toCSS x
+    FontSizeInherit -> "inherit"
+    FontSizeInitial -> "initial"
+    FontSizeUnset -> "unset"
+
+
+data FontSizeAdjust = FontAdjustNone
+                    | FontAdjustProportion Proportion
+                    | FontAdjustInherit
+                    | FontAdjustInitial
+                    | FontAdjustUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontSizeAdjust where
+  toCSS = \case
+    FontAdjustNone -> "none"
+    FontAdjustProportion x -> toCSS x
+    FontAdjustInherit -> "inherit"
+    FontAdjustInitial -> "initial"
+    FontAdjustUnset -> "unset"
+
+
+data FontStretch = FontUltraCondensed
+                 | FontExtraCondensed
+                 | FontCondensed
+                 | FontSemiCondensed
+                 | FontNonStretch
+                 | FontSemiExpanded
+                 | FontExpanded
+                 | FontExtraExpanded
+                 | FontUltraExpanded
+                 | FontStretchPercent Percent
+                 | FontStretchInherit
+                 | FontStretchInitial
+                 | FontStretchUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontStretch where
+  toCSS = \case
+    FontUltraCondensed -> "ultra-condensed"
+    FontExtraCondensed -> "extra-condensed"
+    FontCondensed -> "condensed"
+    FontSemiCondensed -> "semi-condensed"
+    FontNonStretch -> "normal"
+    FontSemiExpanded -> "semi-expanded"
+    FontExpanded -> "expanded"
+    FontExtraExpanded -> "extra-expanded"
+    FontUltraExpanded -> "ultra-expanded"
+    FontStretchPercent x -> toCSS x
+    FontStretchInherit -> "inherit"
+    FontStretchInitial -> "initial"
+    FontStretchUnset -> "unset"
+
+
+data FontStyle = FontNonSlanted
+               | FontItalic
+               | FontOblique
+               | FontAngle Angle
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS FontStyle where
+  toCSS = \case
+    FontNonSlanted -> "normal"
+    FontItalic -> "italic"
+    FontOblique -> "oblique"
+    FontAngle x -> "oblique " <> toCSS x
+
+
+data FontSynthesis = FontSynthesisNone
+                   | FontSynthesisWeight
+                   | FontSynthesisStyle
+                   | FontSynthesisWeightAndStyle
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS FontSynthesis where
+  toCSS = \case
+    FontSynthesisNone -> "none"
+    FontSynthesisWeight -> "weight"
+    FontSynthesisStyle -> "style"
+    FontSynthesisWeightAndStyle -> "weight style"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -2063,8 +2188,15 @@ data StyleProperty =
   | FlexWrap FlexWrap
   | Float Float'
   | FontFamily FontFamilies
-  | FontKerning FontKerning
   -- TODO font-feature-settings
+  | FontKerning FontKerning
+  -- TODO font-language-override
+  | FontOpticalSizing FontOpticalSizing
+  | FontSize FontSize
+  | FontSizeAdjust FontSizeAdjust
+  | FontStretch FontStretch
+  | FontStyle FontStyle
+  | FontSynthesis FontSynthesis
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -2162,6 +2294,12 @@ instance ToCSS StyleProperty where
     Float x -> "float: " <> toCSS x
     FontFamily x -> "font-family: " <> toCSS x
     FontKerning x -> "font-kerning: " <> toCSS x
+    FontOpticalSizing x -> "font-optical-sizing: " <> toCSS x
+    FontSize x -> "font-size: " <> toCSS x
+    FontSizeAdjust x -> "font-size-adjust: " <> toCSS x
+    FontStretch x -> "font-stretch: " <> toCSS x
+    FontStyle x -> "font-style: " <> toCSS x
+    FontSynthesis x -> "font-synthesis: " <> toCSS x
 
 
 type Style = [StyleProperty]
