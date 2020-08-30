@@ -3205,7 +3205,79 @@ data StyleProperty =
   | MaskComposite MaskComposite
   | MaskImage (Maybe Image)
   | MaskMode MaskModes
+  | MaskOrigin MaskOrigin
+  | MaskPosition MaskPositions
   deriving (Eq, Ord, Generic, Read, Show)
+
+
+data MaskOrigin =
+    MaskOriginContentBox
+  | MaskOriginPaddingBox
+  | MaskOriginBorderBox
+  | MaskOriginFillBox
+  | MaskOriginStrokeBox
+  | MaskOriginViewBox
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskOrigin where
+  toCSS = \case
+    MaskOriginContentBox -> "content-box"
+    MaskOriginPaddingBox -> "padding-box"
+    MaskOriginBorderBox -> "border-box"
+    MaskOriginFillBox -> "fill-box"
+    MaskOriginStrokeBox -> "stroke-box"
+    MaskOriginViewBox -> "view-box"
+
+
+data MaskOrigins =
+    MaskOrigins [MaskOrigin]
+  | MaskOriginInherit
+  | MaskOriginInitial
+  | MaskOriginUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskOrigins where
+  toCSS = \case
+    MaskOrigins x -> listToCSS x
+    MaskOriginInherit -> "inherit"
+    MaskOriginInitial -> "initial"
+    MaskOriginUnset -> "unset"
+
+
+data MaskPosition =
+    MaskPositionTop
+  | MaskPositionBottom
+  | MaskPositionLeft
+  | MaskPositionRight
+  | MaskPositionCenter
+  | MaskPositionLength Length
+  | MaskPositionPercent Percent
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskPosition where
+  toCSS = \case
+    MaskPositionTop -> "top"
+    MaskPositionBottom -> "bottom"
+    MaskPositionLeft -> "left"
+    MaskPositionRight -> "right"
+    MaskPositionCenter -> "center"
+    MaskPositionLength x -> toCSS x
+    MaskPositionPercent x -> toCSS x
+
+
+data MaskPositions =
+    MaskPositions [MaskPosition]
+  | MaskPositionInherit
+  | MaskPositionInitial
+  | MaskPositionUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskPositions where
+  toCSS = \case
+    MaskPositions x -> listToCSS x
+    MaskPositionInherit -> "inherit"
+    MaskPositionInitial -> "initial"
+    MaskPositionUnset -> "unset"
 
 
 instance ToCSS StyleProperty where
@@ -3360,6 +3432,8 @@ instance ToCSS StyleProperty where
     MaskComposite x -> "mask-composite: " <> toCSS x
     MaskImage x -> "mask-image: " <> toCSS x
     MaskMode x -> "mask-mode: " <> toCSS x
+    MaskOrigin x -> "mask-origin: " <> toCSS x
+    MaskPosition x -> "mask-position: " <> toCSS x
 
 
 type Style = [StyleProperty]
