@@ -55,7 +55,7 @@ let
 
 
   # Top level overlay (for you to extend)
-  snowman-overlay = self: super: {
+  css-style-type-overlay = self: super: {
     haskell = super.haskell //
       { packages = super.haskell.packages //
         { ${compilerjs} = super.haskell.packages.${compilerjs}.override (old: {
@@ -73,13 +73,13 @@ let
     }) {
     overlays = [
       shpadoinkle-overlay
-      snowman-overlay
+      css-style-type-overlay
     ];
   };
 
 
   # We can name him George
-  snowman = pkgs.haskell.packages.${compilerjs}.callCabal2nix "snowman" (gitignore ignorance ./.) {};
+  css-style-type = pkgs.haskell.packages.${compilerjs}.callCabal2nix "css-style-type" (gitignore ignorance ./.) {};
 
 
 in with pkgs; with lib; with haskell.packages.${compiler};
@@ -87,10 +87,10 @@ in with pkgs; with lib; with haskell.packages.${compiler};
   if inNixShell || asShell
   then shellFor {
     inherit withHoogle;
-    packages = _: [snowman];
+    packages = _: [css-style-type];
     COMPILER = compilerjs;
     buildInputs = [ stylish-haskell cabal-install ghcid ];
     shellHook = ''
       ${lolcat}/bin/lolcat ${./figlet}
     '';
-  } else chill snowman
+  } else chill css-style-type
