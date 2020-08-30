@@ -388,7 +388,10 @@ instance ToCSS Length where
 
 
 newtype Percent = Percent Double
-  deriving (Eq, Ord, Num, Fractional, Real, RealFrac, Floating, RealFloat, Generic, Read, Show, ToCSS)
+  deriving (Eq, Ord, Num, Fractional, Real, RealFrac, Floating, RealFloat, Generic, Read, Show)
+
+instance ToCSS Percent where
+  toCSS (Percent x) = pack (show x) <> "%"
 
 
 data Dimension =
@@ -399,7 +402,7 @@ data Dimension =
 instance ToCSS Dimension where
   toCSS = \case
     LengthDim x -> toCSS x
-    PercentDim x -> toCSS x <> "%"
+    PercentDim x -> toCSS x
 
 
 data Color = RGB Double Double Double
@@ -2272,6 +2275,191 @@ instance ToCSS FontWeight where
     FontWeightUnset -> "unset"
 
 
+newtype FlexFactor = FlexFactor Double
+  deriving (Eq, Ord, Num, Fractional, Real, RealFrac, Floating, RealFloat, Generic, Read, Show)
+
+instance ToCSS FlexFactor where
+  toCSS (FlexFactor x) = pack (show x) <> "fr"
+
+
+data GridAutoColumn =
+    GridAutoColumnLength Length
+  | GridAutoColumnPercent Percent
+  | GridAutoColumnFlex FlexFactor
+  | GridAutoColumnMaxContent
+  | GridAutoColumnMinContent
+  | GridAutoColumnMinMax FlexFactor FlexFactor
+  | GridAutoColumnFitContent GridAutoColumn
+  | GridAutoColumnAuto
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GridAutoColumn where
+  toCSS = \case
+    GridAutoColumnLength x -> toCSS x
+    GridAutoColumnPercent x -> toCSS x
+    GridAutoColumnFlex x -> toCSS x
+    GridAutoColumnMaxContent -> "max-content"
+    GridAutoColumnMinContent -> "min-content"
+    GridAutoColumnMinMax x y -> "minmax(" <> toCSS x <> ", " <> toCSS y <> ")"
+    GridAutoColumnFitContent x -> "fit-content(" <> toCSS x <> ")"
+    GridAutoColumnAuto -> "auto"
+
+
+data GridAutoColumns = AutoColumns [GridAutoColumns]
+                     | AutoColumnsInitial
+                     | AutoColumnsInherit
+                     | AutoColumnsUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GridAutoColumns where
+  toCSS = \case
+    AutoColumns [] -> "auto"
+    AutoColumns x -> intercalate " " $ toCSS <$> x
+    AutoColumnsInitial -> "initial"
+    AutoColumnsInherit -> "inherit"
+    AutoColumnsUnset -> "unset"
+
+
+data GridAutoFlow =
+    AutoFlowRow
+  | AutoFlowColumn
+  | AutoFlowDense
+  | AutoFlowRowDense
+  | AutoFlowColumnDense
+  | AutoFlowInitial
+  | AutoFlowInherit
+  | AutoFlowUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS GridAutoFlow where
+  toCSS = \case
+    AutoFlowRow -> "row"
+    AutoFlowColumn -> "column"
+    AutoFlowDense -> "dense"
+    AutoFlowRowDense -> "row dense"
+    AutoFlowColumnDense -> "column dense"
+    AutoFlowInitial -> "initial"
+    AutoFlowInherit -> "inherit"
+    AutoFlowUnset -> "unset"
+
+
+data GridAutoRow =
+    GridAutoRowLength Length
+  | GridAutoRowPercent Percent
+  | GridAutoRowFlex FlexFactor
+  | GridAutoRowMaxContent
+  | GridAutoRowMinContent
+  | GridAutoRowMinMax FlexFactor FlexFactor
+  | GridAutoRowAuto
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GridAutoRow where
+  toCSS = \case
+    GridAutoRowLength x -> toCSS x
+    GridAutoRowPercent x -> toCSS x
+    GridAutoRowFlex x -> toCSS x
+    GridAutoRowMaxContent -> "max-content"
+    GridAutoRowMinContent -> "min-content"
+    GridAutoRowMinMax x y -> "minmax(" <> toCSS x <> ", " <> toCSS y <> ")"
+    GridAutoRowAuto -> "auto"
+
+
+data GridAutoRows = AutoRows [GridAutoRow]
+                  | AutoRowsInitial
+                  | AutoRowsInherit
+                  | AutoRowsUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GridAutoRows where
+  toCSS = \case
+    AutoRows [] -> "auto"
+    AutoRows x -> intercalate " " $ toCSS <$> x
+    AutoRowsInitial -> "initial"
+    AutoRowsInherit -> "inherit"
+    AutoRowsUnset -> "unset"
+
+
+data GridLine = GridLineAuto
+              | GridLineIdent Text
+              | GridLineInt Int
+              | GridLineIdentInt Text Int
+              | GridLineSpanInt Int
+              | GridLineSpanIdent Text
+              | GridLineSpanIdentInt Text Int
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GridLine where
+  toCSS = \case
+    GridLineAuto -> "auto"
+    GridLineIdent x -> x
+    GridLineInt x -> pack (show x)
+    GridLineIdentInt x y -> x <> " " <> pack (show y)
+    GridLineSpanInt x -> "span " <> pack (show x)
+    GridLineSpanIdent x -> "span " <> x
+    GridLineSpanIdentInt x y -> "span " <> x <> " " <> pack (show y)
+
+
+data GridLines = GridLine GridLine
+               | GridLines GridLine GridLine
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GridLines where
+  toCSS = \case
+    GridLine x -> toCSS x
+    GridLines x y -> toCSS x <> " / " <> toCSS y
+
+
+data GridTemplateAreas = TemplateAreas [Text]
+                       | TemplateAreasInitial
+                       | TemplateAreasInherit
+                       | TemplateAreasUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS GridTemplateAreas where
+  toCSS = \case
+    TemplateAreas [] -> "none"
+    TemplateAreas x -> intercalate " " $ pack . show . unpack <$> x
+    TemplateAreasInitial -> "initial"
+    TemplateAreasInherit -> "inherit"
+    TemplateAreasUnset -> "unset"
+
+
+data HangingPunctuation =
+    HangingPunctuationNone
+  | HangingPunctuationFirst
+  | HangingPunctuationLast
+  | HangingPunctuationForceEnd
+  | HangingPunctuationAllowEnd
+  | HangingPunctuationFirstForceEnd
+  | HangingPunctuationFirstAllowEnd
+  | HangingPunctuationFirstLast
+  | HangingPunctuationLastAllowEnd
+  | HangingPunctuationLastForceEnd
+  | HangingPunctuationFirstForceEndLast
+  | HangingPunctuationFirstAllowEndLast
+  | HangingPunctuationInherit
+  | HangingPunctuationInitial
+  | HangingPunctuationUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS HangingPunctuation where
+  toCSS = \case
+    HangingPunctuationNone -> "none"
+    HangingPunctuationFirst -> "first"
+    HangingPunctuationLast -> "last"
+    HangingPunctuationForceEnd -> "force-end"
+    HangingPunctuationAllowEnd -> "allow-end"
+    HangingPunctuationFirstForceEnd -> "first force-end"
+    HangingPunctuationFirstAllowEnd -> "first allow-end"
+    HangingPunctuationFirstLast -> "first last"
+    HangingPunctuationLastForceEnd -> "last force-end"
+    HangingPunctuationFirstForceEndLast -> "first force-end last"
+    HangingPunctuationFirstAllowEndLast -> "first allow-end last"
+    HangingPunctuationInherit -> "inherit"
+    HangingPunctuationInitial -> "initial"
+    HangingPunctuationUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -2389,6 +2577,14 @@ data StyleProperty =
   | FontWeight FontWeight
   | Gap Dimension
   | Gaps { rowGap :: Dimension, colGap :: Dimension }
+  | GridAutoColumns GridAutoColumns
+  | GridAutoFlow GridAutoFlow
+  | GridAutoRows GridAutoRows
+  | GridColumn GridLines
+  | GridRow GridLines
+  | GridTemplateAreas GridTemplateAreas
+  -- TODO grid-template-rows grid-template-columns
+  | HangingPunctuation HangingPunctuation
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -2501,6 +2697,13 @@ instance ToCSS StyleProperty where
     FontWeight x -> "font-weight: " <> toCSS x
     Gap x -> "gap: " <> toCSS x
     Gaps x y -> "gap: " <> toCSS x <> " " <> toCSS y
+    GridAutoColumns x -> "grid-auto-columns: " <> toCSS x
+    GridAutoFlow x -> "grid-auto-flow: " <> toCSS x
+    GridAutoRows x -> "grid-auto-rows: " <> toCSS x
+    GridColumn x -> "grid-column: " <> toCSS x
+    GridRow x -> "grid-row: " <> toCSS x
+    GridTemplateAreas x -> "grid-template-areas: " <> toCSS x
+    HangingPunctuation x -> "hanging-punctuation: " <> toCSS x
 
 
 type Style = [StyleProperty]
