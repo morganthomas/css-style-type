@@ -1152,6 +1152,11 @@ instance ToCSS Image where
     ImageInherit -> "inherit"
     ImageUnset -> "unset"
 
+instance ToCSS (Maybe Image) where
+  toCSS = \case
+    Just x -> toCSS x
+    Nothing -> "none"
+
 
 data BackgroundRepeat0 = Repeat | RepeatSpace | RepeatRound | NoRepeat
   deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
@@ -2460,6 +2465,586 @@ instance ToCSS HangingPunctuation where
     HangingPunctuationUnset -> "unset"
 
 
+data Height = HeightAuto
+            | HeightLength Length
+            | HeightPercent Percent
+            | HeightInherit
+            | HeightInitial
+            | HeightUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Height where
+  toCSS = \case
+    HeightAuto -> "auto"
+    HeightLength x -> toCSS x
+    HeightPercent x -> toCSS x
+    HeightInherit -> "inherit"
+    HeightInitial -> "initial"
+    HeightUnset -> "unset"
+
+
+data Hyphens = HyphensNone
+             | HyphensManual
+             | HyphensAuto
+             | HyphensInherit
+             | HyphensInitial
+             | HyphensUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS Hyphens where
+  toCSS = \case
+    HyphensNone -> "none"
+    HyphensManual -> "manual"
+    HyphensAuto -> "auto"
+    HyphensInherit -> "inherit"
+    HyphensInitial -> "initial"
+    HyphensUnset -> "unset"
+
+
+data ImageRendering =
+    ImageRenderingAuto
+  | ImageRenderingCrispEdges
+  | ImageRenderingPixelated
+  | ImageRenderingInherit
+  | ImageRenderingInitial
+  | ImageRenderingUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS ImageRendering where
+  toCSS = \case
+    ImageRenderingAuto -> "auto"
+    ImageRenderingCrispEdges -> "crisp-edges"
+    ImageRenderingPixelated -> "pixelated"
+    ImageRenderingInherit -> "inherit"
+    ImageRenderingInitial -> "initial"
+    ImageRenderingUnset -> "unset"
+
+
+data InlineSize =
+    InlineSizeLength Length
+  | InlineSizePercent Percent
+  | InlineSizeMaxContent
+  | InlineSizeMinContent
+  | InlineSizeFitContent Length
+  | InlineSizeAuto
+  | InlineSizeInherit
+  | InlineSizeInitial
+  | InlineSizeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS InlineSize where
+  toCSS = \case
+    InlineSizeLength x -> toCSS x
+    InlineSizePercent x -> toCSS x
+    InlineSizeMaxContent -> "max-content"
+    InlineSizeMinContent -> "min-content"
+    InlineSizeFitContent x -> "fit-content(" <> toCSS x <> ")"
+    InlineSizeAuto -> "auto"
+    InlineSizeInherit -> "inherit"
+    InlineSizeInitial -> "initial"
+
+
+data InsetOffset =
+    InsetLength Length
+  | InsetPercent Percent
+  | InsetAuto
+  | InsetInherit
+  | InsetInitial
+  | InsetUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS InsetOffset where
+  toCSS = \case
+    InsetLength x -> toCSS x
+    InsetPercent x -> toCSS x
+    InsetAuto -> "auto"
+    InsetInherit -> "inherit"
+    InsetInitial -> "initial"
+    InsetUnset -> "unset"
+
+
+data Isolation = IsolationAuto
+               | IsolationIsolate
+               | IsolationInherit
+               | IsolationInitial
+               | IsolationUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS Isolation where
+  toCSS = \case
+    IsolationAuto -> "auto"
+    IsolationIsolate -> "isolate"
+    IsolationInherit -> "inherit"
+    IsolationInitial -> "initial"
+    IsolationUnset -> "unset"
+
+
+data JustifyContent =
+    JustifyContentCenter
+  | JustifyContentStart
+  | JustifyContentEnd
+  | JustifyContentFlexStart
+  | JustifyContentFlexEnd
+  | JustifyContentLeft
+  | JustifyContentRight
+  | JustifyContentNormal
+  | JustifyContentSpaceBetween
+  | JustifyContentSpaceAround
+  | JustifyContentSpaceEvenly
+  | JustifyContentStretch
+  | JustifyContentSafeCenter
+  | JustifyContentUnsafeCenter
+  | JustifyContentInherit
+  | JustifyContentInitial
+  | JustifyContentUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS JustifyContent where
+  toCSS = \case
+    JustifyContentCenter -> "center"
+    JustifyContentStart -> "start"
+    JustifyContentEnd -> "end"
+    JustifyContentFlexStart -> "flex-start"
+    JustifyContentFlexEnd -> "flex-end"
+    JustifyContentLeft -> "left"
+    JustifyContentRight -> "right"
+    JustifyContentNormal -> "normal"
+    JustifyContentSpaceBetween -> "space-between"
+    JustifyContentSpaceAround -> "space-around"
+    JustifyContentSpaceEvenly -> "space-evenly"
+    JustifyContentStretch -> "stretch"
+    JustifyContentSafeCenter -> "safe center"
+    JustifyContentUnsafeCenter -> "unsafe center"
+    JustifyContentInherit -> "inherit"
+    JustifyContentInitial -> "initial"
+    JustifyContentUnset -> "unset"
+
+
+data JustifyItems =
+    JustifyItemsAuto
+  | JustifyItemsNormal
+  | JustifyItemsStretch
+  | JustifyItemsCenter
+  | JustifyItemsStart
+  | JustifyItemsEnd
+  | JustifyItemsFlexStart
+  | JustifyItemsFlexEnd
+  | JustifyItemsSelfStart
+  | JustifyItemsSelfEnd
+  | JustifyItemsLeft
+  | JustifyItemsRight
+  | JustifyItemsBaseline
+  | JustifyItemsFirstBaseline
+  | JustifyItemsLastBaseline
+  | JustifyItemsSafeCenter
+  | JustifyItemsUnsafeCenter
+  | JustifyItemsLegacyRight
+  | JustifyItemsLegacyLeft
+  | JustifyItemsLegacyCenter
+  | JustifyItemsInherit
+  | JustifyItemsInitial
+  | JustifyItemsUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS JustifyItems where
+  toCSS = \case
+    JustifyItemsAuto -> "auto"
+    JustifyItemsNormal -> "normal"
+    JustifyItemsStretch -> "stretch"
+    JustifyItemsCenter -> "center"
+    JustifyItemsStart -> "start"
+    JustifyItemsEnd -> "end"
+    JustifyItemsFlexStart -> "flex-start"
+    JustifyItemsFlexEnd -> "flex-end"
+    JustifyItemsSelfStart -> "self-start"
+    JustifyItemsSelfEnd -> "self-end"
+    JustifyItemsLeft -> "left"
+    JustifyItemsRight -> "right"
+    JustifyItemsBaseline -> "baseline"
+    JustifyItemsFirstBaseline -> "first baseline"
+    JustifyItemsLastBaseline -> "last baseline"
+    JustifyItemsSafeCenter -> "safe center"
+    JustifyItemsUnsafeCenter -> "unsafe center"
+    JustifyItemsLegacyRight -> "legacy right"
+    JustifyItemsLegacyLeft -> "legacy left"
+    JustifyItemsLegacyCenter -> "legacy center"
+    JustifyItemsInherit -> "inherit"
+    JustifyItemsInitial -> "initial"
+    JustifyItemsUnset -> "unset"
+
+
+data JustifySelf =
+    JustifySelfAuto
+  | JustifySelfNormal
+  | JustifySelfStretch
+  | JustifySelfCenter
+  | JustifySelfStart
+  | JustifySelfEnd
+  | JustifySelfFlexStart
+  | JustifySelfFlexEnd
+  | JustifySelfSelfStart
+  | JustifySelfSelfEnd
+  | JustifySelfLeft
+  | JustifySelfRight
+  | JustifySelfBaseline
+  | JustifySelfFirstBaseline
+  | JustifySelfLastBaseline
+  | JustifySelfSafeCenter
+  | JustifySelfUnsafeCenter
+  | JustifySelfInherit
+  | JustifySelfInitial
+  | JustifySelfUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS JustifySelf where
+  toCSS = \case
+    JustifySelfAuto -> "auto"
+    JustifySelfNormal -> "normal"
+    JustifySelfStretch -> "stretch"
+    JustifySelfCenter -> "center"
+    JustifySelfStart -> "start"
+    JustifySelfEnd -> "end"
+    JustifySelfFlexStart -> "flex-start"
+    JustifySelfFlexEnd -> "flex-end"
+    JustifySelfSelfStart -> "self-start"
+    JustifySelfSelfEnd -> "self-end"
+    JustifySelfLeft -> "left"
+    JustifySelfRight -> "right"
+    JustifySelfBaseline -> "baseline"
+    JustifySelfFirstBaseline -> "first baseline"
+    JustifySelfLastBaseline -> "last baseline"
+
+
+data LetterSpacing = LetterSpacingNormal
+                   | LetterSpacingLength Length
+                   | LetterSpacingInherit
+                   | LetterSpacingInitial
+                   | LetterSpacingUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS LetterSpacing where
+  toCSS = \case
+    LetterSpacingNormal -> "normal"
+    LetterSpacingLength x -> toCSS x
+    LetterSpacingInherit -> "inherit"
+    LetterSpacingInitial -> "initial"
+    LetterSpacingUnset -> "unset"
+
+
+data LineBreak =
+    LineBreakAuto
+  | LineBreakLoose
+  | LineBreakNormal
+  | LineBreakStrict
+  | LineBreakAnywhere
+  | LineBreakInitial
+  | LineBreakInherit
+  | LineBreakUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS LineBreak where
+  toCSS = \case
+    LineBreakAuto -> "auto"
+    LineBreakLoose -> "loose"
+    LineBreakNormal -> "normal"
+    LineBreakStrict -> "strict"
+    LineBreakAnywhere -> "anywhere"
+    LineBreakInitial -> "initial"
+    LineBreakInherit -> "inherit"
+    LineBreakUnset -> "unset"
+
+
+data LineHeight =
+    LineHeightNormal
+  | LineHeightProportion Proportion
+  | LineHeightLength Length
+  | LineHeightPercent Percent
+  | LineHeightInherit
+  | LineHeightInitial
+  | LineHeightUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS LineHeight where
+  toCSS = \case
+    LineHeightNormal -> "normal"
+    LineHeightProportion x -> toCSS x
+    LineHeightLength x -> toCSS x
+    LineHeightPercent x -> toCSS x
+    LineHeightInitial -> "initial"
+    LineHeightInherit -> "inherit"
+    LineHeightUnset -> "unset"
+
+
+data ListStylePosition =
+    ListStylePositionInside
+  | ListStylePositionOutside
+  | ListStylePositionInherit
+  | ListStylePositionInitial
+  | ListStylePositionUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS ListStylePosition where
+  toCSS = \case
+    ListStylePositionInside -> "inside"
+    ListStylePositionOutside -> "outside"
+    ListStylePositionInherit -> "inherit"
+    ListStylePositionInitial -> "initial"
+    ListStylePositionUnset -> "unset"
+
+
+data ListStyle =
+    ListStyleDisc
+  | ListStyleCircle
+  | ListStyleSquare
+  | ListStyleDecimal
+  | ListStyleGeorgian
+  | ListStyleTradChineseInformal
+  | ListStyleKannada
+  | ListStyleText Text
+  | ListStyleIdent Text
+  | ListStyleNone
+  | ListStyleInherit
+  | ListStyleInitial
+  | ListStyleUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ListStyle where
+  toCSS = \case
+    ListStyleDisc -> "disc"
+    ListStyleCircle -> "circle"
+    ListStyleSquare -> "square"
+    ListStyleDecimal -> "decimal"
+    ListStyleGeorgian -> "georgian"
+    ListStyleTradChineseInformal -> "trad-chinese-informal"
+    ListStyleKannada -> "kannada"
+    ListStyleText x -> "'" <> x <> "'"
+    ListStyleIdent x -> x
+    ListStyleNone -> "none"
+    ListStyleInherit -> "inherit"
+    ListStyleInitial -> "initial"
+    ListStyleUnset -> "unset"
+
+
+data Margin = MarginLength Length
+            | MarginPercent Percent
+            | MarginAuto
+            | MarginInherit
+            | MarginInitial
+            | MarginUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Margin where
+  toCSS = \case
+    MarginLength x -> toCSS x
+    MarginPercent x -> toCSS x
+    MarginAuto -> "auto"
+    MarginInherit -> "inherit"
+    MarginInitial -> "initial"
+    MarginUnset -> "unset"            
+
+
+data MaskBorderMode =
+    MaskBorderLuminance
+  | MaskBorderAlpha
+  | MaskBorderInherit
+  | MaskBorderInitial
+  | MaskBorderUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskBorderMode where
+  toCSS = \case
+    MaskBorderLuminance -> "luminance"
+    MaskBorderAlpha -> "alpha"
+    MaskBorderInherit -> "inherit"
+    MaskBorderInitial -> "initial"
+    MaskBorderUnset -> "unset"
+
+
+data MaskBorderRepeat =
+    MaskBorderRepeatStretch
+  | MaskBorderRepeatRepeat
+  | MaskBorderRepeatRound
+  | MaskBorderRepeatSpace
+  | MaskBorderRepeatRoundStretch
+  | MaskBorderRepeatInherit
+  | MaskBorderRepeatInitial
+  | MaskBorderRepeatUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskBorderRepeat where
+  toCSS = \case
+    MaskBorderRepeatStretch -> "stretch"
+    MaskBorderRepeatRepeat -> "repeat"
+    MaskBorderRepeatRound -> "round"
+    MaskBorderRepeatRoundStretch -> "round stretch"
+    MaskBorderRepeatInherit -> "inherit"
+    MaskBorderRepeatInitial -> "initial"
+    MaskBorderRepeatUnset -> "unset"
+
+
+data MaskBorderSliceValue =
+    MaskBorderOffset Double
+  | MaskBorderOffsetPercent Percent
+  | MaskBorderFill
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskBorderSliceValue where
+  toCSS = \case
+    MaskBorderOffset x -> toCSS x
+    MaskBorderOffsetPercent x -> toCSS x
+    MaskBorderFill -> "fill"
+
+
+data MaskBorderSlice =
+    MaskBorderSliceAllSides MaskBorderSliceValue
+  | MaskBorderSliceVertHoriz MaskBorderSliceValue MaskBorderSliceValue
+  | MaskBorderSliceTopHorizBottom MaskBorderSliceValue MaskBorderSliceValue MaskBorderSliceValue
+  | MaskBorderSliceTopRightBottomLeft MaskBorderSliceValue MaskBorderSliceValue MaskBorderSliceValue MaskBorderSliceValue
+  | MaskBorderSliceInherit
+  | MaskBorderSliceInitial
+  | MaskBorderSliceUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskBorderSlice where
+  toCSS = \case
+    MaskBorderSliceAllSides x -> toCSS x
+    MaskBorderSliceVertHoriz x y -> toCSS x <> " " <> toCSS y
+    MaskBorderSliceTopHorizBottom x y z -> toCSS x <> " " <> toCSS y <> " " <> toCSS z
+    MaskBorderSliceTopRightBottomLeft w x y z -> toCSS w <> " " <> toCSS x <> " " <> toCSS y <> " " <> toCSS z
+    MaskBorderSliceInitial -> "initial"
+    MaskBorderSliceInherit -> "inherit"
+    MaskBorderSliceUnset -> "unset"
+
+
+data MaskBorderWidth =
+    MaskBorderLength Length
+  | MaskBorderWidthPercent Percent
+  | MaskBorderWidthProportion Proportion
+  | MaskBorderWidthAuto
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskBorderWidth where
+  toCSS = \case
+    MaskBorderLength x -> toCSS x
+    MaskBorderWidthPercent x -> toCSS x
+    MaskBorderWidthProportion x -> toCSS x
+    MaskBorderWidthAuto -> "auto"
+
+
+data MaskBorderWidths =
+    MaskBorderWidthAllSides MaskBorderWidth
+  | MaskBorderWidthVertHoriz MaskBorderWidth MaskBorderWidth
+  | MaskBorderWidthTopHorizBottom MaskBorderWidth MaskBorderWidth MaskBorderWidth
+  | MaskBorderWidthTopRightBottomLeft MaskBorderWidth MaskBorderWidth MaskBorderWidth MaskBorderWidth
+  | MaskBorderWidthInherit
+  | MaskBorderWidthInitial
+  | MaskBorderWidthUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskBorderWidths where
+  toCSS = \case
+    MaskBorderWidthAllSides x -> toCSS x
+    MaskBorderWidthVertHoriz x y -> toCSS x <> " " <> toCSS y
+    MaskBorderWidthTopHorizBottom x y z -> toCSS x <> " " <> toCSS y <> " " <> toCSS z
+    MaskBorderWidthTopRightBottomLeft w x y z -> toCSS w <> " " <> toCSS x <> " " <> toCSS y <> " " <> toCSS z
+    MaskBorderWidthInherit -> "inherit"
+    MaskBorderWidthInitial -> "initial"
+    MaskBorderWidthUnset -> "unset"
+
+
+data MaskClipValue =
+    MaskClipContentBox
+  | MaskClipPaddingBox
+  | MaskClipBorderBox
+  | MaskClipMarginBox
+  | MaskClipFillBox
+  | MaskClipStrokeBox
+  | MaskClipViewBox
+  | MaskNoClip
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+
+instance ToCSS MaskClipValue where
+  toCSS = \case
+    MaskClipContentBox -> "content-box"
+    MaskClipPaddingBox -> "padding-box"
+    MaskClipBorderBox -> "border-box"
+    MaskClipMarginBox -> "margin-box"
+    MaskClipFillBox -> "fill-box"
+    MaskClipStrokeBox -> "stroke-box"
+    MaskClipViewBox -> "view-box"
+    MaskNoClip -> "no-clip"
+
+
+data MaskClip = MaskClipValues [MaskClipValue]
+              | MaskClipInherit
+              | MaskClipInitial
+              | MaskClipUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskClip where
+  toCSS = \case
+    MaskClipValues x -> listToCSS x
+    MaskClipInherit -> "inherit"
+    MaskClipInitial -> "initial"
+    MaskClipUnset -> "unset"
+
+
+data MaskCompositeValue =
+    MaskCompositeAdd
+  | MaskCompositeSubtract
+  | MaskCompositeIntersect
+  | MaskCompositeExclude
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskCompositeValue where
+  toCSS = \case
+    MaskCompositeAdd -> "add"
+    MaskCompositeSubtract -> "subtract"
+    MaskCompositeIntersect -> "intersect"
+    MaskCompositeExclude -> "exclude"
+
+
+data MaskComposite = MaskCompositeValues [MaskCompositeValue]
+                   | MaskCompositeInherit
+                   | MaskCompositeInitial
+                   | MaskCompositeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskComposite where
+  toCSS = \case
+    MaskCompositeValues x -> listToCSS x
+    MaskCompositeInherit -> "inherit"
+    MaskCompositeInitial -> "initial"
+    MaskCompositeUnset -> "unset"
+
+
+data MaskMode = MaskModeAlpha
+              | MaskModeLuminance
+              | MaskModeMatchSource
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskMode where
+  toCSS = \case
+    MaskModeAlpha -> "alpha"
+    MaskModeLuminance -> "luminance"
+    MaskModeMatchSource -> "match-source"
+
+
+data MaskModes = MaskModes [MaskMode]
+               | MaskModeInherit
+               | MaskModeInitial
+               | MaskModeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskModes where
+  toCSS = \case
+    MaskModes x -> listToCSS x
+    MaskModeInherit -> "inherit"
+    MaskModeInitial -> "initial"
+    MaskModeUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -2585,7 +3170,43 @@ data StyleProperty =
   | GridTemplateAreas GridTemplateAreas
   -- TODO grid-template-rows grid-template-columns
   | HangingPunctuation HangingPunctuation
+  | Height Height
+  | Hyphens Hyphens
+  | ImageRendering ImageRendering
+  | InlineSize InlineSize
+  | InsetBlockEnd InsetOffset
+  | InsetBlockStart InsetOffset
+  | InsetInlineEnd InsetOffset
+  | InsetInlineStart InsetOffset
+  | Isolation Isolation
+  | JustifyContent JustifyContent
+  | JustifyItems JustifyItems
+  | JustifySelf JustifySelf
+  | LetterSpacing LetterSpacing
+  | LineBreak LineBreak
+  | LineHeight LineHeight
+  | ListStyleImage (Maybe Image)
+  | ListStylePosition ListStylePosition
+  | ListStyleType ListStyle
+  | MarginBlockEnd Margin
+  | MarginBlockStart Margin
+  | MarginBottom Margin
+  | MarginInlineEnd Margin
+  | MarginInlineStart Margin
+  | MarginLeft Margin
+  | MarginRight Margin
+  | MarginTop Margin
+  | MaskBorderMode MaskBorderMode
+  | MaskBorderRepeat MaskBorderRepeat
+  | MaskBorderSlice MaskBorderSlice
+  | MaskBorderSource (Maybe Image)
+  | MaskBorderWidth MaskBorderWidth
+  | MaskClip MaskClip
+  | MaskComposite MaskComposite
+  | MaskImage (Maybe Image)
+  | MaskMode MaskModes
   deriving (Eq, Ord, Generic, Read, Show)
+
 
 instance ToCSS StyleProperty where
   toCSS = \case
@@ -2704,6 +3325,41 @@ instance ToCSS StyleProperty where
     GridRow x -> "grid-row: " <> toCSS x
     GridTemplateAreas x -> "grid-template-areas: " <> toCSS x
     HangingPunctuation x -> "hanging-punctuation: " <> toCSS x
+    Height x -> "height: " <> toCSS x
+    Hyphens x -> "hyphens: " <> toCSS x
+    ImageRendering x -> "image-rendering: " <> toCSS x
+    InlineSize x -> "inline-size: " <> toCSS x
+    InsetBlockEnd x -> "inset-block-end: " <> toCSS x
+    InsetBlockStart x -> "inset-block-start: " <> toCSS x
+    InsetInlineEnd x -> "inset-inline-end: " <> toCSS x
+    InsetInlineStart x -> "inset-inline-start: " <> toCSS x
+    Isolation x -> "isolation: " <> toCSS x
+    JustifyContent x -> "justify-content: " <> toCSS x
+    JustifyItems x -> "justify-items: " <> toCSS x
+    JustifySelf x -> "justify-self: " <> toCSS x
+    LetterSpacing x -> "letter-spacing: " <> toCSS x
+    LineBreak x -> "line-break: " <> toCSS x
+    LineHeight x -> "line-height: " <> toCSS x
+    ListStyleImage x -> "list-style-image: " <> toCSS x
+    ListStylePosition x -> "list-style-position: " <> toCSS x
+    ListStyleType x -> "list-style-type: " <> toCSS x
+    MarginBlockEnd x -> "margin-block-end: " <> toCSS x
+    MarginBlockStart x -> "margin-block-start: " <> toCSS x
+    MarginBottom x -> "margin-bottom: " <> toCSS x
+    MarginInlineEnd x -> "margin-inline-end: " <> toCSS x
+    MarginInlineStart x -> "margin-inline-start: " <> toCSS x
+    MarginLeft x -> "margin-left: " <> toCSS x
+    MarginRight x -> "margin-right: " <> toCSS x
+    MarginTop x -> "margin-top: " <> toCSS x
+    MaskBorderMode x -> "mask-border-mode: " <> toCSS x
+    MaskBorderRepeat x -> "mask-border-repeat: " <> toCSS x
+    MaskBorderSlice x -> "mask-border-slice: " <> toCSS x
+    MaskBorderSource x -> "mask-border-source: " <> toCSS x
+    MaskBorderWidth x -> "mask-border-width: " <> toCSS x
+    MaskClip x -> "mask-clip: " <> toCSS x
+    MaskComposite x -> "mask-composite: " <> toCSS x
+    MaskImage x -> "mask-image: " <> toCSS x
+    MaskMode x -> "mask-mode: " <> toCSS x
 
 
 type Style = [StyleProperty]
