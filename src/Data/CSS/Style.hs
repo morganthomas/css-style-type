@@ -3045,6 +3045,147 @@ instance ToCSS MaskModes where
     MaskModeUnset -> "unset"
 
 
+data MaskOrigin =
+    MaskOriginContentBox
+  | MaskOriginPaddingBox
+  | MaskOriginBorderBox
+  | MaskOriginFillBox
+  | MaskOriginStrokeBox
+  | MaskOriginViewBox
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskOrigin where
+  toCSS = \case
+    MaskOriginContentBox -> "content-box"
+    MaskOriginPaddingBox -> "padding-box"
+    MaskOriginBorderBox -> "border-box"
+    MaskOriginFillBox -> "fill-box"
+    MaskOriginStrokeBox -> "stroke-box"
+    MaskOriginViewBox -> "view-box"
+
+
+data MaskOrigins =
+    MaskOrigins [MaskOrigin]
+  | MaskOriginInherit
+  | MaskOriginInitial
+  | MaskOriginUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskOrigins where
+  toCSS = \case
+    MaskOrigins x -> listToCSS x
+    MaskOriginInherit -> "inherit"
+    MaskOriginInitial -> "initial"
+    MaskOriginUnset -> "unset"
+
+
+data MaskPosition =
+    MaskPositionTop
+  | MaskPositionBottom
+  | MaskPositionLeft
+  | MaskPositionRight
+  | MaskPositionCenter
+  | MaskPositionLength Length
+  | MaskPositionPercent Percent
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskPosition where
+  toCSS = \case
+    MaskPositionTop -> "top"
+    MaskPositionBottom -> "bottom"
+    MaskPositionLeft -> "left"
+    MaskPositionRight -> "right"
+    MaskPositionCenter -> "center"
+    MaskPositionLength x -> toCSS x
+    MaskPositionPercent x -> toCSS x
+
+
+data MaskPositions =
+    MaskPositions [MaskPosition]
+  | MaskPositionInherit
+  | MaskPositionInitial
+  | MaskPositionUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskPositions where
+  toCSS = \case
+    MaskPositions x -> listToCSS x
+    MaskPositionInherit -> "inherit"
+    MaskPositionInitial -> "initial"
+    MaskPositionUnset -> "unset"
+
+
+data MaskRepeat = MaskRepeatYes
+                | MaskRepeatSpace
+                | MaskRepeatRound
+                | MaskRepeatNo
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskRepeat where
+  toCSS = \case
+    MaskRepeatYes -> "repeat"
+    MaskRepeatSpace -> "space"
+    MaskRepeatRound -> "round"
+    MaskRepeatNo -> "no-repeat"
+
+newtype MaskRepeatXY = MaskRepeatXY (MaskRepeat, MaskRepeat)
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskRepeatXY where
+  toCSS (MaskRepeatXY (x,y)) = toCSS x <> " " <> toCSS y
+
+data MaskRepeats = MaskRepeats [MaskRepeatXY]
+                 | MaskRepeatInherit
+                 | MaskRepeatInitial
+                 | MaskRepeatUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskRepeats where
+  toCSS = \case
+    MaskRepeats x -> listToCSS x
+    MaskRepeatInherit -> "inherit"
+    MaskRepeatInitial -> "initial"
+    MaskRepeatUnset -> "unset"
+
+
+data MaskSize = MaskSizeLength Length
+              | MaskSizePercent Percent
+              | MaskSizeAuto
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskSize where
+  toCSS = \case
+    MaskSizeLength x -> toCSS x
+    MaskSizePercent x -> toCSS x
+    MaskSizeAuto -> "auto"
+
+data MaskSizeXY = MaskSizeCover
+                | MaskSizeContain
+                | MaskSizeX MaskSize
+                | MaskSizeXY MaskSize MaskSize
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskSizeXY where
+  toCSS = \case
+    MaskSizeCover -> "cover"
+    MaskSizeContain -> "contain"
+    MaskSizeX x -> toCSS x
+    MaskSizeXY x y -> toCSS x <> " " <> toCSS y
+
+data MaskSizes = MaskSizes [MaskSizeXY]
+               | MaskSizeInherit
+               | MaskSizeInitial
+               | MaskSizeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS MaskSizes where
+  toCSS = \case
+    MaskSizes x -> listToCSS x
+    MaskSizeInherit -> "inherit"
+    MaskSizeInitial -> "initial"
+    MaskSizeUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3207,77 +3348,9 @@ data StyleProperty =
   | MaskMode MaskModes
   | MaskOrigin MaskOrigin
   | MaskPosition MaskPositions
+  | MaskRepeat MaskRepeats
+  | MaskSize MaskSizes
   deriving (Eq, Ord, Generic, Read, Show)
-
-
-data MaskOrigin =
-    MaskOriginContentBox
-  | MaskOriginPaddingBox
-  | MaskOriginBorderBox
-  | MaskOriginFillBox
-  | MaskOriginStrokeBox
-  | MaskOriginViewBox
-  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
-
-instance ToCSS MaskOrigin where
-  toCSS = \case
-    MaskOriginContentBox -> "content-box"
-    MaskOriginPaddingBox -> "padding-box"
-    MaskOriginBorderBox -> "border-box"
-    MaskOriginFillBox -> "fill-box"
-    MaskOriginStrokeBox -> "stroke-box"
-    MaskOriginViewBox -> "view-box"
-
-
-data MaskOrigins =
-    MaskOrigins [MaskOrigin]
-  | MaskOriginInherit
-  | MaskOriginInitial
-  | MaskOriginUnset
-  deriving (Eq, Ord, Generic, Read, Show)
-
-instance ToCSS MaskOrigins where
-  toCSS = \case
-    MaskOrigins x -> listToCSS x
-    MaskOriginInherit -> "inherit"
-    MaskOriginInitial -> "initial"
-    MaskOriginUnset -> "unset"
-
-
-data MaskPosition =
-    MaskPositionTop
-  | MaskPositionBottom
-  | MaskPositionLeft
-  | MaskPositionRight
-  | MaskPositionCenter
-  | MaskPositionLength Length
-  | MaskPositionPercent Percent
-  deriving (Eq, Ord, Generic, Read, Show)
-
-instance ToCSS MaskPosition where
-  toCSS = \case
-    MaskPositionTop -> "top"
-    MaskPositionBottom -> "bottom"
-    MaskPositionLeft -> "left"
-    MaskPositionRight -> "right"
-    MaskPositionCenter -> "center"
-    MaskPositionLength x -> toCSS x
-    MaskPositionPercent x -> toCSS x
-
-
-data MaskPositions =
-    MaskPositions [MaskPosition]
-  | MaskPositionInherit
-  | MaskPositionInitial
-  | MaskPositionUnset
-  deriving (Eq, Ord, Generic, Read, Show)
-
-instance ToCSS MaskPositions where
-  toCSS = \case
-    MaskPositions x -> listToCSS x
-    MaskPositionInherit -> "inherit"
-    MaskPositionInitial -> "initial"
-    MaskPositionUnset -> "unset"
 
 
 instance ToCSS StyleProperty where
@@ -3434,6 +3507,8 @@ instance ToCSS StyleProperty where
     MaskMode x -> "mask-mode: " <> toCSS x
     MaskOrigin x -> "mask-origin: " <> toCSS x
     MaskPosition x -> "mask-position: " <> toCSS x
+    MaskRepeat x -> "mask-repeat: " <> toCSS x
+    MaskSize x -> "mask-size: " <> toCSS x
 
 
 type Style = [StyleProperty]
