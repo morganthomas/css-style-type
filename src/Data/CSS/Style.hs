@@ -1219,6 +1219,9 @@ data Size = SizeLength Length
           | SizeMaxContent
           | SizeMinContent
           | SizeFitContent Dimension
+          | SizeInitial
+          | SizeInherit
+          | SizeUnset
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS Size where
@@ -1229,6 +1232,9 @@ instance ToCSS Size where
     SizeMaxContent -> "max-content"
     SizeMinContent -> "min-content"
     SizeFitContent x -> "fit-content(" <> toCSS x <> ")"
+    SizeInitial -> "initial"
+    SizeInherit -> "inherit"
+    SizeUnset -> "unset"
 
 
 data BorderSizes = UniformBorderSize Size
@@ -3186,6 +3192,94 @@ instance ToCSS MaskSizes where
     MaskSizeUnset -> "unset"
 
 
+data MaskType = MaskLuminance
+              | MaskAlpha
+              | MaskTypeInherit
+              | MaskTypeInitial
+              | MaskTypeUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MaskType where
+  toCSS = \case
+    MaskAlpha -> "alpha"
+    MaskLuminance -> "luminance"
+    MaskTypeInherit -> "inherit"
+    MaskTypeInitial -> "initial"
+    MaskTypeUnset -> "unset"
+
+
+data ZoomFactor = ZoomAuto
+                | ZoomProportion Proportion
+                | ZoomPercent Percent
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ZoomFactor where
+  toCSS = \case
+    ZoomAuto -> "auto"
+    ZoomProportion x -> toCSS x
+    ZoomPercent x -> toCSS x
+
+
+data MixBlendMode = MixBlendNormal
+                  | MixBlendMultiply
+                  | MixBlendScreen
+                  | MixBlendOverlay
+                  | MixBlendDarken
+                  | MixBlendLighten
+                  | MixBlendColorDodge
+                  | MixBlendColorBurn
+                  | MixBlendHardLight
+                  | MixBlendSoftLight
+                  | MixBlendDifference
+                  | MixBlendExclusion
+                  | MixBlendHue
+                  | MixBlendSaturation
+                  | MixBlendColor
+                  | MixBlendLuminosity
+                  | MixBlendModeInitial
+                  | MixBlendModeInherit
+                  | MixBlendModeUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS MixBlendMode where
+  toCSS = \case
+    MixBlendNormal -> "normal"
+    MixBlendMultiply -> "multiply"
+    MixBlendScreen -> "screen"
+    MixBlendOverlay -> "overlay"
+    MixBlendDarken -> "darken"
+    MixBlendLighten -> "lighten"
+    MixBlendColorDodge -> "color-dodge"
+    MixBlendColorBurn -> "color-burn"
+    MixBlendHardLight -> "hard-light"
+    MixBlendSoftLight -> "soft-light"
+    MixBlendDifference -> "difference"
+    MixBlendExclusion -> "exclusion"
+    MixBlendHue -> "hue"
+    MixBlendSaturation -> "saturation"
+    MixBlendColor -> "color"
+    MixBlendLuminosity -> "luminosity"
+    MixBlendModeInitial -> "initial"
+    MixBlendModeInherit -> "inherit"
+    MixBlendModeUnset -> "unset"
+
+
+data ObjectFit = ObjectFitFill
+               | ObjectFitContain
+               | ObjectFitCover
+               | ObjectFitNone
+               | ObjectFitScaleDown
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS ObjectFit where
+  toCSS = \case
+    ObjectFitFill -> "fill"
+    ObjectFitContain -> "contain"
+    ObjectFitCover -> "cover"
+    ObjectFitNone -> "none"
+    ObjectFitScaleDown -> "scale-down"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3350,6 +3444,18 @@ data StyleProperty =
   | MaskPosition MaskPositions
   | MaskRepeat MaskRepeats
   | MaskSize MaskSizes
+  | MaskType MaskType
+  | MaxBlockSize Size
+  | MaxHeight Size
+  | MaxWidth Size
+  | MinBlockSize Size
+  | MinHeight Size
+  | MinInlineSize Size
+  | MinWidth Size
+  | MinZoom ZoomFactor
+  | MixBlendMode MixBlendMode
+  -- TODO negative (counter)
+  | ObjectFit ObjectFit
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -3509,6 +3615,17 @@ instance ToCSS StyleProperty where
     MaskPosition x -> "mask-position: " <> toCSS x
     MaskRepeat x -> "mask-repeat: " <> toCSS x
     MaskSize x -> "mask-size: " <> toCSS x
+    MaskType x -> "mask-type: " <> toCSS x
+    MaxBlockSize x -> "max-block-size: " <> toCSS x
+    MaxHeight x -> "max-height: " <> toCSS x
+    MaxWidth x -> "max-width: " <> toCSS x
+    MinBlockSize x -> "min-block-size: " <> toCSS x
+    MinHeight x -> "min-height: " <> toCSS x
+    MinInlineSize x -> "min-inline-size: " <> toCSS x
+    MinWidth x -> "min-width: " <> toCSS x
+    MinZoom x -> "min-zoom: " <> toCSS x
+    MixBlendMode x -> "mix-blend-mode: " <> toCSS x
+    ObjectFit x -> "object-fit: " <> toCSS x
 
 
 type Style = [StyleProperty]
