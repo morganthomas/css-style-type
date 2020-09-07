@@ -3573,6 +3573,24 @@ instance ToCSS OverflowWrap where
     OverflowWrapUnset -> "unset"
 
 
+data OverscrollBehavior = OverscrollAuto
+                        | OverscrollContain
+                        | OverscrollNone
+                        | OverscrollInitial
+                        | OverscrollInherit
+                        | OverscrollUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS OverscrollBehavior where
+  toCSS = \case
+    OverscrollAuto -> "auto"
+    OverscrollContain -> "contain"
+    OverscrollNone -> "none"
+    OverscrollInitial -> "initial"
+    OverscrollInherit -> "inherit"
+    OverscrollUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3771,6 +3789,11 @@ data StyleProperty =
   | OverflowX OverflowMode
   | OverflowY OverflowMode
   | Overflow OverflowMode
+  | OverscrollBehavior OverscrollBehavior
+  | OverscrollBehaviorBlock OverscrollBehavior
+  | OverscrollBehaviorInline OverscrollBehavior
+  | OverscrollBehaviorX OverscrollBehavior
+  | OverscrollBehaviorY OverscrollBehavior
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -3963,6 +3986,11 @@ instance ToCSS StyleProperty where
     OverflowX x -> "overflow-x: " <> toCSS x
     OverflowY x -> "overflow-y: " <> toCSS x
     Overflow x -> "overflow: " <> toCSS x
+    OverscrollBehavior x -> "overscroll-behavior: " <> toCSS x
+    OverscrollBehaviorBlock x -> "overscroll-behavior-block: " <> toCSS x
+    OverscrollBehaviorInline x -> "overscroll-behavior-inline: " <> toCSS x
+    OverscrollBehaviorX x -> "overscroll-behavior-x: " <> toCSS x
+    OverscrollBehaviorY x -> "overscroll-behavior-y: " <> toCSS x
 
 
 type Style = [StyleProperty]
