@@ -3607,6 +3607,134 @@ instance ToCSS Padding where
     PaddingUnset -> "unset"
 
 
+data PaintOrderItem = PaintFill
+                    | PaintStroke
+                    | PaintMarkers
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS PaintOrderItem where
+  toCSS = \case
+    PaintFill -> "fill"
+    PaintStroke -> "stroke"
+    PaintMarkers -> "markers"
+
+
+data Perspective = PerspectiveNone
+                 | PerspectiveLength Length
+                 | PerspectiveInherit
+                 | PerspectiveInitial
+                 | PerspectiveUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Perspective where
+  toCSS = \case
+    PerspectiveNone -> "none"
+    PerspectiveLength x -> toCSS x
+    PerspectiveInherit -> "inherit"
+    PerspectiveInitial -> "initial"
+    PerspectiveUnset -> "unset"
+
+
+data PerspectiveOrigin =
+    PerspectiveOriginPosition Position
+  | PerspectiveOriginInherit
+  | PerspectiveOriginInitial
+  | PerspectiveOriginUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS PerspectiveOrigin where
+  toCSS = \case
+    PerspectiveOriginPosition x -> toCSS x
+    PerspectiveOriginInherit -> "inherit"
+    PerspectiveOriginInitial -> "initial"
+    PerspectiveOriginUnset -> "unset"
+
+
+data PlaceContent =
+    PlaceContentStart
+  | PlaceContentEnd
+  | PlaceContentFlexStart
+  | PlaceContentFlexEnd
+  | PlaceContentCenter
+  | PlaceContentLeft
+  | PlaceContentRight
+  | PlaceContentSpaceBetween
+  | PlaceContentBaseline
+  | PlaceContentFirstBaseline
+  | PlaceContentLastBaseline
+  | PlaceContentSpaceAround
+  | PlaceContentSpaceEvenly
+  | PlaceContentStretch
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS PlaceContent where
+  toCSS = \case
+    PlaceContentStart -> "start"
+    PlaceContentEnd -> "end"
+    PlaceContentFlexStart -> "flex-start"
+    PlaceContentFlexEnd -> "flex-end"
+    PlaceContentCenter -> "center"
+    PlaceContentLeft -> "left"
+    PlaceContentRight -> "right"
+    PlaceContentSpaceBetween -> "space-between"
+    PlaceContentBaseline -> "baseline"
+    PlaceContentFirstBaseline -> "first baseline"
+    PlaceContentLastBaseline -> "last baseline"
+    PlaceContentSpaceAround -> "space-around"
+    PlaceContentSpaceEvenly -> "space-evenly"
+    PlaceContentStretch -> "stretch"
+
+
+data PointerEvents =
+    PointerEventsAuto
+  | PointerEventsNone
+  | PointerEventsVisiblePainted
+  | PointerEventsVisibleFill
+  | PointerEventsVisibleStroke
+  | PointerEventsVisible
+  | PointerEventsPainted
+  | PointerEventsFill
+  | PointerEventsStroke
+  | PointerEventsAll
+  | PointerEventsInherit
+  | PointerEventsInitial
+  | PointerEventsUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS PointerEvents where
+  toCSS = \case
+    PointerEventsAuto -> "auto"
+    PointerEventsNone -> "none"
+    PointerEventsVisiblePainted -> "visiblePaitned"
+    PointerEventsVisibleFill -> "visibleFill"
+    PointerEventsVisibleStroke -> "visibleStroke"
+    PointerEventsVisible -> "visible"
+    PointerEventsPainted -> "painted"
+    PointerEventsFill -> "fill"
+    PointerEventsStroke -> "stroke"
+    PointerEventsAll -> "all"
+    PointerEventsInherit -> "inherit"
+    PointerEventsInitial -> "initial"
+    PointerEventsUnset -> "unset"
+
+
+data PositionMode =
+    PositionStatic
+  | PositionRelative
+  | PositionAbsolute
+  | PositionFixed
+  | PositionSticky
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS PositionMode where
+  toCSS = \case
+    PositionStatic -> "static"
+    PositionRelative -> "relative"
+    PositionAbsolute -> "absolute"
+    PositionFixed -> "fixed"
+    PositionSticky -> "sticky"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3821,6 +3949,15 @@ data StyleProperty =
   | PaddingLeft Padding
   | PaddingRight Padding
   | PaddingTop Padding
+  | PaintOrderNormal
+  | PaintOrder [PaintOrderItem]
+  | Perspective Perspective
+  | PerspectiveOrigin PerspectiveOrigin
+  | PlaceContent PlaceContent
+  -- TODO place-items, place-self
+  | PointerEvents PointerEvents
+  | Position PositionMode
+  -- TODO: prefix (counters)
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -4029,6 +4166,13 @@ instance ToCSS StyleProperty where
     PaddingLeft x -> "padding-left: " <> toCSS x
     PaddingRight x -> "padding-right: " <> toCSS x
     PaddingTop x -> "padding-top: " <> toCSS x
+    PaintOrderNormal -> "paint-order: normal"
+    PaintOrder x -> "paint-order: " <> intercalate " " (toCSS <$> x)
+    Perspective x -> "perspective: " <> toCSS x
+    PerspectiveOrigin x -> "perspective-origin: " <> toCSS x
+    PlaceContent x -> "place-content: " <> toCSS x
+    PointerEvents x -> "pointer-events: " <> toCSS x
+    Position x -> "position: " <> toCSS x
 
 
 type Style = [StyleProperty]
