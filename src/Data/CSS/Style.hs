@@ -3517,6 +3517,62 @@ instance ToCSS OutlineOffset where
     OutlineOffsetUnset -> "unset"
 
 
+data OverflowAnchor = OverflowAnchorAuto
+                    | OverflowAnchorNone
+                    | OverflowAnchorInherit
+                    | OverflowAnchorInitial
+                    | OverflowAnchorUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS OverflowAnchor where
+  toCSS = \case
+    OverflowAnchorAuto -> "auto"
+    OverflowAnchorNone -> "none"
+    OverflowAnchorInherit -> "inherit"
+    OverflowAnchorInitial -> "initial"
+    OverflowAnchorUnset -> "unset"
+
+
+data OverflowMode = OverflowVisible
+                  | OverflowHidden
+                  | OverflowClip
+                  | OverflowScroll
+                  | OverflowAuto
+                  | OverflowInherit
+                  | OverflowInitial
+                  | OverflowUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS OverflowMode where
+  toCSS = \case
+    OverflowVisible -> "visible"
+    OverflowHidden -> "hidden"
+    OverflowScroll -> "scroll"
+    OverflowClip -> "clip"
+    OverflowAuto -> "auto"
+    OverflowInherit -> "inherit"
+    OverflowInitial -> "initial"
+    OverflowUnset -> "unset"
+
+
+data OverflowWrap = OverflowWrapNormal
+                  | OverflowWrapBreakWord
+                  | OverflowWrapAnywhere
+                  | OverflowWrapInherit
+                  | OverflowWrapInitial
+                  | OverflowWrapUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS OverflowWrap where
+  toCSS = \case
+    OverflowWrapNormal -> "normal"
+    OverflowWrapBreakWord -> "break-word"
+    OverflowWrapAnywhere -> "anywhere"
+    OverflowWrapInherit -> "inherit"
+    OverflowWrapInitial -> "initial"
+    OverflowWrapUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3705,6 +3761,16 @@ data StyleProperty =
   | Orphans Orphans
   | OutlineColor Color
   | OutlineOffset OutlineOffset
+  | OutlineStyle BorderStyle
+  | OutlineStyleAuto
+  | OutlineWidth BorderWidth
+  | OverflowAnchor OverflowAnchor
+  | OverflowBlock OverflowMode
+  | OverflowInline OverflowMode
+  | OverflowWrap OverflowWrap
+  | OverflowX OverflowMode
+  | OverflowY OverflowMode
+  | Overflow OverflowMode
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -3887,6 +3953,16 @@ instance ToCSS StyleProperty where
     Orphans x -> "orphans: " <> toCSS x
     OutlineColor x -> "outline-color: " <> toCSS x
     OutlineOffset x -> "outline-offset: " <> toCSS x
+    OutlineStyleAuto -> "outline-style: auto"
+    OutlineStyle x -> "outline-style: " <> toCSS x
+    OutlineWidth x -> "outline-width: " <> toCSS x
+    OverflowAnchor x -> "overflow-anchor: " <> toCSS x
+    OverflowBlock x -> "overflow-block: " <> toCSS x
+    OverflowInline x -> "overflow-inline: " <> toCSS x
+    OverflowWrap x -> "overflow-wrap: " <> toCSS x
+    OverflowX x -> "overflow-x: " <> toCSS x
+    OverflowY x -> "overflow-y: " <> toCSS x
+    Overflow x -> "overflow: " <> toCSS x
 
 
 type Style = [StyleProperty]
