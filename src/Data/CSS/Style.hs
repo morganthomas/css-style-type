@@ -1000,32 +1000,72 @@ instance ToCSS AngularColorStop where
     <> maybeToCSS s0 <> " " <> maybeToCSS s1
 
 
-data Position0 = PositionTop
-               | PositionBottom
-               | PositionLeft
-               | PositionRight
-               | PositionCenter
-               | PositionDim Dimension
-  deriving (Eq, Ord, Generic, Read, Show)
+data PositionXKeyword = PositionLeft
+                      | PositionRight
+                      | PositionXCenter
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
 
-instance ToCSS Position0 where
+instance ToCSS PositionXKeyword where
+  toCSS = \case
+    PositionLeft -> "left"
+    PositionRight -> "right"
+    PositionXCenter -> "center"
+
+data PositionYKeyword = PositionTop
+                      | PositionBottom
+                      | PositionYCenter
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS PositionYKeyword where
   toCSS = \case
     PositionTop -> "top"
     PositionBottom -> "bottom"
-    PositionLeft -> "left"
-    PositionRight -> "right"
-    PositionCenter -> "center"
-    PositionDim x -> toCSS x
+    PositionYCenter -> "center"
 
+data PositionX = XKw PositionXKeyword
+               | XLen Length
+               | XPct Percent
+               | XKwLen PositionXKeyword Length
+               | XKwPct PositionXKeyword Percent
+  deriving (Eq, Ord, Generic, Read, Show)
 
-data Position = Position1 Position0
-              | Position2 Position0 Position0
+instance ToCSS PositionX where
+  toCSS = \case
+    XKw x -> toCSS x
+    XLen x -> toCSS x
+    XPct x -> toCSS x
+    XKwLen x y -> toCSS x <> " " <> toCSS y
+    XKwPct x y -> toCSS x <> " " <> toCSS y
+
+data PositionY = YKw PositionYKeyword
+               | YLen Length
+               | YPct Percent
+               | YKwLen PositionYKeyword Length
+               | YKwPct PositionYKeyword Percent
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS PositionY where
+  toCSS = \case
+    YKw x -> toCSS x
+    YLen x -> toCSS x
+    YPct x -> toCSS x
+    YKwLen x y -> toCSS x <> " " <> toCSS y
+    YKwPct x y -> toCSS x <> " " <> toCSS y
+
+data Position = PositionXKw PositionXKeyword
+              | PositionYKw PositionYKeyword
+              | PositionXLen Length
+              | PositionXPct Percent
+              | PositionXY PositionX PositionY
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS Position where
   toCSS = \case
-    Position1 x -> toCSS x
-    Position2 x y -> toCSS x <> " " <> toCSS y
+    PositionXKw x -> toCSS x
+    PositionYKw x -> toCSS x
+    PositionXLen x -> toCSS x
+    PositionXPct x -> toCSS x
+    PositionXY x y -> toCSS x <> " " <> toCSS y
 
 
 data Positions = Positions [Position]
@@ -3280,6 +3320,203 @@ instance ToCSS ObjectFit where
     ObjectFitScaleDown -> "scale-down"
 
 
+data ObjectPosition = ObjectPos Position
+                    | ObjectPosInitial
+                    | ObjectPosInherit
+                    | ObjectPosUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ObjectPosition where
+  toCSS = \case
+    ObjectPos x -> toCSS x
+    ObjectPosInitial -> "initial"
+    ObjectPosInherit -> "inherit"
+    ObjectPosUnset -> "unset"
+
+
+data OffsetPosition = OffsetPosAuto
+                    | OffsetPos Position
+                    | OffsetPosInherit
+                    | OffsetPosInitial
+                    | OffsetPosUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS OffsetPosition where
+  toCSS = \case
+    OffsetPosAuto -> "auto"
+    OffsetPos x -> toCSS x
+    OffsetPosInherit -> "inherit"
+    OffsetPosInitial -> "initial"
+    OffsetPosUnset -> "unset"
+
+
+data RaySize = SizeClosestSide
+             | SizeFarthestSide
+             | SizeClosestCorner
+             | SizeFarthestCorner
+             | RayLength Length
+             | RayPercent Percent
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS RaySize where
+  toCSS = \case
+    SizeClosestSide -> "closest-side"
+    SizeFarthestSide -> "farthest-side"
+    SizeClosestCorner -> "closest-corner"
+    SizeFarthestCorner -> "farthest-corner"
+    RayLength x -> toCSS x
+    RayPercent x -> toCSS x
+
+data RayContain = RayContain
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS RayContain where
+  toCSS _ = "contain"
+
+data FillRule = NonZero | EvenOdd
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS FillRule where
+  toCSS = \case
+    NonZero -> "nonzero"
+    EvenOdd -> "evenodd"
+
+data Path = NoPath
+          | Ray Angle (Maybe RaySize) (Maybe RayContain)
+          | Path (Maybe FillRule) Text
+          | PathUrl Text
+          | PathShape BasicShape
+          | PathBorderBox
+          | PathPaddingBox
+          | PathContentBox
+          | PathMarginBox
+          | PathFillBox
+          | PathStrokeBox
+          | PathViewBox
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Path where
+  toCSS = \case
+    NoPath -> "none"
+    Ray x y z -> "ray(" <> toCSS x <> " " <> maybeToCSS y <> " " <> maybeToCSS z <> ")"
+    Path (Just x) y -> "path(" <> toCSS x <> ", '" <> y <> "')"
+    Path Nothing x -> "path('" <> x <> "')"
+    PathUrl x -> "url(" <> x <> ")"
+    PathShape x -> toCSS x
+    PathBorderBox -> "border-box"
+    PathPaddingBox -> "padding-box"
+    PathContentBox -> "content-box"
+    PathMarginBox -> "margin-box"
+    PathFillBox -> "fill-box"
+    PathStrokeBox -> "stroke-box"
+    PathViewBox -> "view-box"
+
+
+data ShapeRadius = ShapeRadiusLength Length
+                 | ShapeRadiusPercent Percent
+                 | ShapeRadiusClosestSide
+                 | ShapeRadiusFarthestSide
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ShapeRadius where
+  toCSS = \case
+    ShapeRadiusLength x -> toCSS x
+    ShapeRadiusPercent x -> toCSS x
+    ShapeRadiusClosestSide -> "closest-side"
+    ShapeRadiusFarthestSide -> "farthest-side"
+
+data BasicShape = ShapePath Path
+                | ShapeInset [Dimension] (Maybe Radius)
+                | ShapeCircle (Maybe ShapeRadius) (Maybe Position)
+                | ShapeEllipse (Maybe (ShapeRadius, ShapeRadius)) (Maybe Position)
+                | ShapePolygon (Maybe FillRule) [(Dimension, Dimension)]
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BasicShape where
+  toCSS = \case
+    ShapePath x -> toCSS x
+    ShapeInset x (Just y) -> "inset(" <> intercalate " " (toCSS <$> x) <> " round " <> toCSS y <> ")"
+    ShapeInset x Nothing -> "inset(" <> intercalate " " (toCSS <$> x) <> ")"
+    ShapeCircle Nothing Nothing -> "circle()"
+    ShapeCircle (Just x) Nothing -> "circle(" <> toCSS x <> ")"
+    ShapeCircle Nothing (Just x) -> "circle(at " <> toCSS x <> ")"
+    ShapeCircle (Just x) (Just y) -> "circle(" <> toCSS x <> " at " <> toCSS y <> ")"
+    ShapeEllipse Nothing Nothing -> "ellipse()"
+    ShapeEllipse (Just (x,y)) Nothing -> "ellipse(" <> toCSS x <> " " <> toCSS y <> ")"
+    ShapeEllipse Nothing (Just x) -> "ellipse(at " <> toCSS x <> ")"
+    ShapeEllipse (Just (x,y)) (Just z) -> "ellipse(" <> toCSS x <> " " <> toCSS y <> " at " <> toCSS z <> ")"
+    ShapePolygon Nothing x -> "polygon(" <> intercalate "," ((\(y,z) -> toCSS y <> " " <> toCSS z) <$> x) <> ")"
+    ShapePolygon (Just w) x -> "polygon(" <> toCSS w <> ", " <> intercalate "," ((\(y,z) -> toCSS y <> " " <> toCSS z) <$> x) <> ")"
+
+
+data OffsetRotation = OffsetRotateAuto
+                    | OffsetRotateAngle Angle
+                    | OffsetRotateAutoAngle Angle
+                    | OffsetRotateReverse
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS OffsetRotation where
+  toCSS = \case
+    OffsetRotateAuto -> "auto"
+    OffsetRotateAngle x -> toCSS x
+    OffsetRotateAutoAngle x -> "auto " <> toCSS x
+    OffsetRotateReverse -> "reverse"
+
+
+data Order = OrderVal Int
+           | OrderInherit
+           | OrderInitial
+           | OrderUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Order where
+  toCSS = \case
+    OrderVal x -> toCSS x
+    OrderInherit -> "inherit"
+    OrderInitial -> "initial"
+    OrderUnset -> "unset"
+
+
+data Orientation = OrientationAuto
+                 | OrientationPortrait
+                 | OrientationLandscape
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS Orientation where
+  toCSS = \case
+    OrientationAuto -> "auto"
+    OrientationPortrait -> "portrait"
+    OrientationLandscape -> "landscape"
+
+
+data Orphans = OrphansVal Int
+             | OrphansInherit
+             | OrphansInitial
+             | OrphansUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Orphans where
+  toCSS = \case
+    OrphansVal x -> toCSS x
+    OrphansInherit -> "inherit"
+    OrphansInitial -> "initial"
+    OrphansUnset -> "unset"
+
+
+data OutlineOffset = OutlineOffsetLength Length
+                   | OutlineOffsetInherit
+                   | OutlineOffsetInitial
+                   | OutlineOffsetUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS OutlineOffset where
+  toCSS = \case
+    OutlineOffsetLength x -> toCSS x
+    OutlineOffsetInitial -> "initial"
+    OutlineOffsetInherit -> "inherit"
+    OutlineOffsetUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3456,6 +3693,18 @@ data StyleProperty =
   | MixBlendMode MixBlendMode
   -- TODO negative (counter)
   | ObjectFit ObjectFit
+  | ObjectPosition ObjectPosition
+  | OffsetAnchor OffsetPosition
+  | OffsetDistance Dimension
+  | OffsetPath Path
+  | OffsetPosition OffsetPosition
+  | OffsetRotate OffsetRotation
+  | Opacity Proportion
+  | Order Order
+  | Orientation Orientation
+  | Orphans Orphans
+  | OutlineColor Color
+  | OutlineOffset OutlineOffset
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -3626,6 +3875,18 @@ instance ToCSS StyleProperty where
     MinZoom x -> "min-zoom: " <> toCSS x
     MixBlendMode x -> "mix-blend-mode: " <> toCSS x
     ObjectFit x -> "object-fit: " <> toCSS x
+    ObjectPosition x -> "object-poisition: " <> toCSS x
+    OffsetAnchor x -> "offset-anchor: " <> toCSS x
+    OffsetDistance x -> "offset-distance: " <> toCSS x
+    OffsetPath x -> "offset-path: " <> toCSS x
+    OffsetPosition x -> "offset-position: " <> toCSS x
+    OffsetRotate x -> "offset-rotate: " <> toCSS x
+    Opacity x -> "opacity: " <> toCSS x
+    Order x -> "order: " <> toCSS x
+    Orientation x -> "orientation: " <> toCSS x
+    Orphans x -> "orphans: " <> toCSS x
+    OutlineColor x -> "outline-color: " <> toCSS x
+    OutlineOffset x -> "outline-offset: " <> toCSS x
 
 
 type Style = [StyleProperty]
