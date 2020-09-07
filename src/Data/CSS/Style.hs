@@ -3591,6 +3591,22 @@ instance ToCSS OverscrollBehavior where
     OverscrollUnset -> "unset"
 
 
+data Padding = PaddingLength Length
+             | PaddingPercent Percent
+             | PaddingInherit
+             | PaddingInitial
+             | PaddingUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Padding where
+  toCSS = \case
+    PaddingLength x -> toCSS x
+    PaddingPercent x -> toCSS x
+    PaddingInherit -> "inherit"
+    PaddingInitial -> "initial"
+    PaddingUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3794,6 +3810,17 @@ data StyleProperty =
   | OverscrollBehaviorInline OverscrollBehavior
   | OverscrollBehaviorX OverscrollBehavior
   | OverscrollBehaviorY OverscrollBehavior
+  | Padding Padding
+  | PaddingBlockEnd Padding
+  | PaddingBlockStart Padding
+  | PaddingBlock Padding
+  | PaddingBottom Padding
+  | PaddingInlineEnd Padding
+  | PaddingInlineStart Padding
+  | PaddingInline Padding
+  | PaddingLeft Padding
+  | PaddingRight Padding
+  | PaddingTop Padding
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -3991,6 +4018,17 @@ instance ToCSS StyleProperty where
     OverscrollBehaviorInline x -> "overscroll-behavior-inline: " <> toCSS x
     OverscrollBehaviorX x -> "overscroll-behavior-x: " <> toCSS x
     OverscrollBehaviorY x -> "overscroll-behavior-y: " <> toCSS x
+    Padding x -> "padding: " <> toCSS x
+    PaddingBlockEnd x -> "padding-block-end: " <> toCSS x
+    PaddingBlockStart x -> "padding-block-start: " <> toCSS x
+    PaddingBlock x -> "padding-block: " <> toCSS x
+    PaddingBottom x -> "padding-bottom: " <> toCSS x
+    PaddingInlineEnd x -> "padding-inline-end: " <> toCSS x
+    PaddingInlineStart x -> "padding-inline-start: " <> toCSS x
+    PaddingInline x -> "padding-inline: " <> toCSS x
+    PaddingLeft x -> "padding-left: " <> toCSS x
+    PaddingRight x -> "padding-right: " <> toCSS x
+    PaddingTop x -> "padding-top: " <> toCSS x
 
 
 type Style = [StyleProperty]
