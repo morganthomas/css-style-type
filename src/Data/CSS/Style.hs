@@ -3868,6 +3868,24 @@ instance ToCSS ScrollMargin where
     ScrollMarginUnset -> "unset"
 
 
+data ScrollPadding = ScrollPaddingAuto
+                   | ScrollPaddingLength Length
+                   | ScrollPaddingPercent Percent
+                   | ScrollPaddingInherit
+                   | ScrollPaddingInitial
+                   | ScrollPaddingUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ScrollPadding where
+  toCSS = \case
+    ScrollPaddingAuto -> "auto"
+    ScrollPaddingLength x -> toCSS x
+    ScrollPaddingPercent x -> toCSS x
+    ScrollPaddingInherit -> "inherit"
+    ScrollPaddingInitial -> "initial"
+    ScrollPaddingUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -4110,6 +4128,18 @@ data StyleProperty =
   | ScrollMarginInlineEnd ScrollMargin
   | ScrollMarginInlineStart ScrollMargin
   | ScrollMarginInline ScrollMargin
+  | ScrollPadding ScrollPadding
+  | ScrollPaddingBlock ScrollPadding
+  | ScrollPaddingBlockEnd ScrollPadding
+  | ScrollPaddingBlockStart ScrollPadding
+  | ScrollPaddingBottom ScrollPadding
+  | ScrollPaddingInline ScrollPadding
+  | ScrollPaddingInlineEnd ScrollPadding
+  | ScrollPaddingInlineStart ScrollPadding
+  | ScrollPaddingLeft ScrollPadding
+  | ScrollPaddingRight ScrollPadding
+  | ScrollPaddingTop ScrollPadding
+  | StyleSyntax Text
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -4344,6 +4374,18 @@ instance ToCSS StyleProperty where
     ScrollMarginInlineEnd x -> "scroll-margin-inline-end: " <> toCSS x
     ScrollMarginInlineStart x -> "scroll-margin-inline-start: " <> toCSS x
     ScrollMarginInline x -> "scroll-margin-inline: " <> toCSS x
+    ScrollPadding x -> "scroll-padding: " <> toCSS x
+    ScrollPaddingBlock x -> "scroll-padding-block: " <> toCSS x
+    ScrollPaddingBlockEnd x -> "scroll-padding-block-end: " <> toCSS x
+    ScrollPaddingBlockStart x -> "scroll-padding-block-start: " <> toCSS x
+    ScrollPaddingBottom x -> "scroll-padding-bottom: " <> toCSS x
+    ScrollPaddingInline x -> "scroll-padding-inline: " <> toCSS x
+    ScrollPaddingInlineEnd x -> "scroll-padding-inline-end: " <> toCSS x
+    ScrollPaddingInlineStart x -> "scroll-padding-inline-start: " <> toCSS x
+    ScrollPaddingLeft x -> "scroll-padding-left: " <> toCSS x
+    ScrollPaddingRight x -> "scroll-padding-right: " <> toCSS x
+    ScrollPaddingTop x -> "scroll-padding-top: " <> toCSS x
+    StyleSyntax x -> x
 
 
 type Style = [StyleProperty]
