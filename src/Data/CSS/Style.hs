@@ -11,7 +11,6 @@ module Data.CSS.Style
   , StyleProperty (..)
   ) where
 
-
 import Data.Maybe (fromMaybe, maybeToList)
 import Data.String
 import Data.Text
@@ -948,22 +947,22 @@ instance ToCSS ImageUrl where
   toCSS (ImageUrl x) = "url(\"" <> x <> "\")"
 
 
-data LeftOrRight = Left' | Right'
+data LeftOrRight = Left'' | Right''
   deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
 
 instance ToCSS LeftOrRight where
   toCSS = \case
-    Left' -> "left"
-    Right' -> "right"
+    Left'' -> "left"
+    Right'' -> "right"
 
 
-data TopOrBottom = Top' | Bottom'
+data TopOrBottom = Top'' | Bottom''
   deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
 
 instance ToCSS TopOrBottom where
   toCSS = \case
-    Top' -> "top"
-    Bottom' -> "bottom"
+    Top'' -> "top"
+    Bottom'' -> "bottom"
 
 
 data GradientAngle =
@@ -3735,6 +3734,140 @@ instance ToCSS PositionMode where
     PositionSticky -> "sticky"
 
 
+data Quotes = QuotesNone
+            | QuotesAuto
+            | QuotesVals [(Text,Text)]
+            | QuotesInherit
+            | QuotesInitial
+            | QuotesUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Quotes where
+  toCSS = \case
+    QuotesNone -> "none"
+    QuotesAuto -> "auto"
+    QuotesVals x -> intercalate " " $ (\(y,z) -> "\"" <> y <> "\" \"" <> z <> "\"") <$> x
+    QuotesInherit -> "inherit"
+    QuotesInitial -> "initial"
+    QuotesUnset -> "unset"
+
+
+data Resize =
+    ResizeNone
+  | ResizeBoth
+  | ResizeHorizontal
+  | ResizeVertical
+  | ResizeBlock
+  | ResizeInline
+  | ResizeInherit
+  | ResizeInitial
+  | ResizeUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS Resize where
+  toCSS = \case
+    ResizeNone -> "none"
+    ResizeBoth -> "both"
+    ResizeHorizontal -> "horizontal"
+    ResizeVertical -> "vertical"
+    ResizeBlock -> "block"
+    ResizeInline -> "inline"
+    ResizeInherit -> "inherit"
+    ResizeInitial -> "initial"
+    ResizeUnset -> "unset"
+
+
+data Axis = XAxis | YAxis | ZAxis
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS Axis where
+  toCSS = \case
+    XAxis -> "x"
+    YAxis -> "y"
+    ZAxis -> "z"
+
+
+data Vector3D = Vector3D Double Double Double
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Vector3D where
+  toCSS (Vector3D x y z) = intercalate " " $ toCSS <$> [x,y,z]
+
+
+data Rotate = RotateNone
+            | RotateAngle Angle
+            | RotateAxis Axis Angle
+            | RotateVec Vector3D Angle
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Rotate where
+  toCSS = \case
+    RotateNone -> "none"
+    RotateAngle x -> toCSS x
+    RotateAxis x y -> toCSS x <> " " <> toCSS y
+    RotateVec x y -> toCSS x <> " " <> toCSS y
+
+
+data RowGap = RowGapLength Length
+            | RowGapPercent Percent
+            | RowGapInherit
+            | RowGapInitial
+            | RowGapUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS RowGap where
+  toCSS = \case
+    RowGapLength x -> toCSS x
+    RowGapPercent x -> toCSS x
+    RowGapInherit -> "inherit"
+    RowGapInitial -> "initial"
+    RowGapUnset -> "unset"
+
+
+data Scale = Scale1D Double
+           | Scale2D Double Double
+           | Scale3D Double Double Double
+           | ScaleNone
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Scale where
+  toCSS = \case
+    Scale1D x -> toCSS x
+    Scale2D x y -> toCSS x <> " " <> toCSS y
+    Scale3D x y z -> toCSS x <> " " <> toCSS y <> " " <> toCSS z
+    ScaleNone -> "none"
+
+
+data ScrollBehavior = ScrollBehaviorAuto
+                    | ScrollBehaviorSmooth
+                    | ScrollBehaviorInherit
+                    | ScrollBehaviorInitial
+                    | ScrollBehaviorUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS ScrollBehavior where
+  toCSS = \case
+    ScrollBehaviorAuto -> "auto"
+    ScrollBehaviorSmooth -> "smooth"
+    ScrollBehaviorInherit -> "inherit"
+    ScrollBehaviorInitial -> "initial"
+    ScrollBehaviorUnset -> "unset"
+
+
+data ScrollMargin = ScrollMarginLength Length
+                  | ScrollMarginInherit
+                  | ScrollMarginInitial
+                  | ScrollMarginUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ScrollMargin where
+  toCSS = \case
+    ScrollMarginLength x -> toCSS x
+    ScrollMarginInherit -> "inherit"
+    ScrollMarginInitial -> "initial"
+    ScrollMarginUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -3797,7 +3930,7 @@ data StyleProperty =
   | BorderTopStyle BorderStyle
   | BorderTopWidth BorderWidth
   | BorderWidth BorderWidth
-  | BottomOffset Offset
+  | Bottom' Offset
   | BoxDecorationBreak BoxDecorationBreak
   -- TODO box-shadow
   | BoxSizing BoxSizing
@@ -3872,6 +4005,7 @@ data StyleProperty =
   | JustifyContent JustifyContent
   | JustifyItems JustifyItems
   | JustifySelf JustifySelf
+  | Left' Offset
   | LetterSpacing LetterSpacing
   | LineBreak LineBreak
   | LineHeight LineHeight
@@ -3958,6 +4092,24 @@ data StyleProperty =
   | PointerEvents PointerEvents
   | Position PositionMode
   -- TODO: prefix (counters)
+  | Quotes Quotes
+  | Resize Resize
+  | Right' Offset
+  | Rotate Rotate
+  | RowGap RowGap
+  | Scale Scale
+  | ScrollBehavior ScrollBehavior
+  | ScrollMarginBottom ScrollMargin
+  | ScrollMarginLeft ScrollMargin
+  | ScrollMarginRight ScrollMargin
+  | ScrollMarginTop ScrollMargin
+  | ScrollMargin ScrollMargin
+  | ScrollMarginBlockEnd ScrollMargin
+  | ScrollMarginBlockStart ScrollMargin
+  | ScrollMarginBlock ScrollMargin
+  | ScrollMarginInlineEnd ScrollMargin
+  | ScrollMarginInlineStart ScrollMargin
+  | ScrollMarginInline ScrollMargin
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -4023,7 +4175,7 @@ instance ToCSS StyleProperty where
     BorderTopStyle x -> "border-top-style: " <> toCSS x
     BorderTopWidth x -> "border-top-width: " <> toCSS x
     BorderWidth x -> "border-width: " <> toCSS x
-    BottomOffset x -> "bottom: " <> toCSS x
+    Bottom' x -> "bottom: " <> toCSS x
     BoxDecorationBreak x -> "box-decoration-break: " <> toCSS x
     BoxSizing x -> "box-sizing: " <> toCSS x
     BreakAfter x -> "break-after: " <> toCSS x
@@ -4090,6 +4242,7 @@ instance ToCSS StyleProperty where
     JustifyContent x -> "justify-content: " <> toCSS x
     JustifyItems x -> "justify-items: " <> toCSS x
     JustifySelf x -> "justify-self: " <> toCSS x
+    Left' x -> "left: " <> toCSS x
     LetterSpacing x -> "letter-spacing: " <> toCSS x
     LineBreak x -> "line-break: " <> toCSS x
     LineHeight x -> "line-height: " <> toCSS x
@@ -4173,6 +4326,24 @@ instance ToCSS StyleProperty where
     PlaceContent x -> "place-content: " <> toCSS x
     PointerEvents x -> "pointer-events: " <> toCSS x
     Position x -> "position: " <> toCSS x
+    Quotes x -> "quotes: " <> toCSS x
+    Resize x -> "resize: " <> toCSS x
+    Right' x -> "right: " <> toCSS x
+    Rotate x -> "rotate: " <> toCSS x
+    RowGap x -> "row-gap: " <> toCSS x
+    Scale x -> "scale: " <> toCSS x
+    ScrollBehavior x -> "scroll-behavior: " <> toCSS x
+    ScrollMarginBottom x -> "scroll-margin-bottom: " <> toCSS x
+    ScrollMarginLeft x -> "scroll-margin-left: " <> toCSS x
+    ScrollMarginRight x -> "scroll-margin-right: " <> toCSS x
+    ScrollMarginTop x -> "scroll-margin-top: " <> toCSS x
+    ScrollMargin x -> "scroll-margin: " <> toCSS x
+    ScrollMarginBlockEnd x -> "scroll-margin-block-end: " <> toCSS x
+    ScrollMarginBlockStart x -> "scroll-margin-block-start: " <> toCSS x
+    ScrollMarginBlock x -> "scroll-margin-block: " <> toCSS x
+    ScrollMarginInlineEnd x -> "scroll-margin-inline-end: " <> toCSS x
+    ScrollMarginInlineStart x -> "scroll-margin-inline-start: " <> toCSS x
+    ScrollMarginInline x -> "scroll-margin-inline: " <> toCSS x
 
 
 type Style = [StyleProperty]
