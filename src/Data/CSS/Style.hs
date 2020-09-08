@@ -3886,6 +3886,60 @@ instance ToCSS ScrollPadding where
     ScrollPaddingUnset -> "unset"
 
 
+data ScrollbarColor =
+    ScrollbarColorAuto
+  | ScrollbarColorDark
+  | ScrollbarColorLight
+  | ScrollbarColors Color Color
+  | ScrollbarColorInherit
+  | ScrollbarColorInitial
+  | ScrollbarColorUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ScrollbarColor where
+  toCSS = \case
+    ScrollbarColorAuto -> "auto"
+    ScrollbarColorDark -> "dark"
+    ScrollbarColorLight -> "light"
+    ScrollbarColors x y -> toCSS x <> " " <> toCSS y
+    ScrollbarColorInherit -> "inherit"
+    ScrollbarColorInitial -> "initial"
+    ScrollbarColorUnset -> "unset"
+
+
+data ScrollbarWidth =
+    ScrollbarWidthAuto
+  | ScrollbarWidthThin
+  | ScrollbarWidthNone
+  | ScrollbarWidthInherit
+  | ScrollbarWidthInitial
+  | ScrollbarWidthUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS ScrollbarWidth where
+  toCSS = \case
+    ScrollbarWidthAuto -> "auto"
+    ScrollbarWidthThin -> "thin"
+    ScrollbarWidthNone -> "none"
+    ScrollbarWidthInherit -> "inherit"
+    ScrollbarWidthInitial -> "initial"
+    ScrollbarWidthUnset -> "unset"
+
+
+data ShapeImageThreshold = ShapeImageThresholdVal Double
+                         | ShapeImageThresholdInherit
+                         | ShapeImageThresholdInitial
+                         | ShapeImageThresholdUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ShapeImageThreshold where
+  toCSS = \case
+    ShapeImageThresholdVal x -> toCSS x
+    ShapeImageThresholdInherit -> "inherit"
+    ShapeImageThresholdInitial -> "initial"
+    ShapeImageThresholdUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -4139,6 +4193,10 @@ data StyleProperty =
   | ScrollPaddingLeft ScrollPadding
   | ScrollPaddingRight ScrollPadding
   | ScrollPaddingTop ScrollPadding
+  -- TODO scroll-snap-align, scroll-snap-stop, scroll-snap-type
+  | ScrollbarColor ScrollbarColor
+  | ScrollbarWidth ScrollbarWidth
+  | ShapeImageThreshold ShapeImageThreshold
   | StyleSyntax Text
   deriving (Eq, Ord, Generic, Read, Show)
 
@@ -4385,6 +4443,9 @@ instance ToCSS StyleProperty where
     ScrollPaddingLeft x -> "scroll-padding-left: " <> toCSS x
     ScrollPaddingRight x -> "scroll-padding-right: " <> toCSS x
     ScrollPaddingTop x -> "scroll-padding-top: " <> toCSS x
+    ScrollbarColor x -> "scrollbar-color: " <> toCSS x
+    ScrollbarWidth x -> "scrollbar-width: " <> toCSS x
+    ShapeImageThreshold x -> "shape-image-threshold: " <> toCSS x
     StyleSyntax x -> x
 
 
