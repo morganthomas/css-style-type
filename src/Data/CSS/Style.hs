@@ -4175,21 +4175,20 @@ instance ToCSS TextDecorationThickness where
     TextDecorationThicknessUnset -> "unset"
 
 
-data TextEmphasisValue = TextEmphasisChar Text
-                       | TextEmphasisColor Color
-                       | TextEmphasisFilled
-                       | TextEmphasisOpen
-                       | TextEmphasisSesame
-                       | TextEmphasisDot
-                       | TextEmphasisCircle
-                       | TextEmphasisDoubleCircle
-                       | TextEmphasisTriangle
+data TextEmphasisStyleValue =
+    TextEmphasisChar Text
+  | TextEmphasisFilled
+  | TextEmphasisOpen
+  | TextEmphasisSesame
+  | TextEmphasisDot
+  | TextEmphasisCircle
+  | TextEmphasisDoubleCircle
+  | TextEmphasisTriangle
   deriving (Eq, Ord, Generic, Read, Show)
 
-instance ToCSS TextEmphasisValue where
+instance ToCSS TextEmphasisStyleValue where
   toCSS = \case
     TextEmphasisChar x -> "'" <> x <> "'"
-    TextEmphasisColor x -> toCSS x
     TextEmphasisFilled -> "filled"
     TextEmphasisOpen -> "open"
     TextEmphasisSesame -> "sesame"
@@ -4198,18 +4197,18 @@ instance ToCSS TextEmphasisValue where
     TextEmphasisDoubleCircle -> "double-circle"
     TextEmphasisTriangle -> "triangle"
 
-data TextEmphasis = TextEmphasisValues [TextEmphasisValue]
-                  | TextEmphasisInherit
-                  | TextEmphasisInitial
-                  | TextEmphasisUnset
+data TextEmphasisStyle = TextEmphasisStyles [TextEmphasisStyleValue]
+                       | TextEmphasisStyleInherit
+                       | TextEmphasisStyleInitial
+                       | TextEmphasisStyleUnset
   deriving (Eq, Ord, Generic, Read, Show)
 
-instance ToCSS TextEmphasis where
+instance ToCSS TextEmphasisStyle where
   toCSS = \case
-    TextEmphasisValues [] -> "none"
-    TextEmphasisInherit -> "inherit"
-    TextEmphasisInitial -> "initial"
-    TextEmphasisUnset -> "unset"
+    TextEmphasisStyles [] -> "none"
+    TextEmphasisStyleInherit -> "inherit"
+    TextEmphasisStyleInitial -> "initial"
+    TextEmphasisStyleUnset -> "unset"
 
 
 data TextEmphasisPositionHorizontal = TextEmphasisOver
@@ -4240,6 +4239,261 @@ data TextEmphasisPosition = TextEmphasisPositions
 instance ToCSS TextEmphasisPosition where
   toCSS = \case
     TextEmphasisPositions x y -> toCSS x <> " " <> toCSS y
+
+
+data TextIndent = TextIndentLength Length
+                | TextIndentPercent Percent
+                | TextIndentEachLine Dimension
+                | TextIndentHanging Dimension
+                | TextIndentInherit
+                | TextIndentInitial
+                | TextIndentUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextIndent where
+  toCSS = \case
+    TextIndentLength x -> toCSS x
+    TextIndentPercent x -> toCSS x
+    TextIndentEachLine x -> toCSS x <> " each-line"
+    TextIndentHanging x -> toCSS x <> " hanging"
+    TextIndentInherit -> "inherit"
+    TextIndentInitial -> "initial"
+    TextIndentUnset -> "unset"
+
+
+data TextJustify = TextJustifyNone
+                 | TextJustifyAuto
+                 | TextJustifyInterWord
+                 | TextJustifyInterCharacter
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextJustify where
+  toCSS = \case
+    TextJustifyNone -> "none"
+    TextJustifyAuto -> "auto"
+    TextJustifyInterWord -> "inter-word"
+    TextJustifyInterCharacter -> "inter-character"
+
+
+data TextOrientation =
+    TextOrientationMixed
+  | TextOrientationUpright
+  | TextOrientationSidewaysRight
+  | TextOrientationSideways
+  | TextOrientationUseGlyphOrientation
+  | TextOrientationInherit
+  | TextOrientationInitial
+  | TextOrientationUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextOrientation where
+  toCSS = \case
+    TextOrientationMixed -> "mixed"
+    TextOrientationUpright -> "upright"
+    TextOrientationSidewaysRight -> "sideways-right"
+    TextOrientationSideways -> "sideways"
+    TextOrientationUseGlyphOrientation -> "use-glyph-orientation"
+    TextOrientationInherit -> "inherit"
+    TextOrientationInitial -> "initial"
+    TextOrientationUnset -> "unset"
+
+
+data TextOverflow = TextOverflowClip
+                  | TextOverflowEllipsis
+                  | TextOverflowString Text
+                  | TextOverflowFade
+                  | TextOverflowFadeLength Length
+                  | TextOverflowFadePercent Percent
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextOverflow where
+  toCSS = \case
+    TextOverflowClip -> "clip"
+    TextOverflowEllipsis -> "ellipsis"
+    TextOverflowString x -> "\"" <> x <> "\""
+    TextOverflowFade -> "fade"
+    TextOverflowFadeLength x -> "fade(" <> toCSS x <> ")"
+    TextOverflowFadePercent x -> "fade(" <> toCSS x <> ")"
+
+
+data TextRendering =
+    TextRenderingAuto
+  | TextRenderingOptimizeSpeed
+  | TextRenderingOptimizeLegibility
+  | TextRenderingGeometricPrecision
+  | TextRenderingInherit
+  | TextRenderingInitial
+  | TextRenderingUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextRendering where
+  toCSS = \case
+    TextRenderingAuto -> "auto"
+    TextRenderingOptimizeSpeed -> "optimizeSpeed"
+    TextRenderingOptimizeLegibility -> "optimizeLegibility"
+    TextRenderingGeometricPrecision -> "geometricPrecision"
+    TextRenderingInherit -> "inherit"
+    TextRenderingInitial -> "initial"
+    TextRenderingUnset -> "unset"
+
+
+data Shadow = Shadow { shadowOffsetX    :: Length
+                     , shadowOffsetY    :: Length
+                     , shadowBlurRadius :: Length
+                     , shadowColor      :: Color }
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Shadow where
+  toCSS (Shadow x r y c) = toCSS x <> " " <> toCSS y <> " " <> toCSS r <> " " <> toCSS c
+
+data TextShadow = TextShadows [Shadow]
+                | TextShadowInherit
+                | TextShadowInitial
+                | TextShadowUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextShadow where
+  toCSS = \case
+    TextShadows x -> listToCSS x
+    TextShadowInherit -> "inherit"
+    TextShadowInitial -> "initial"
+    TextShadowUnset -> "unset"
+
+
+data TextTransform =
+    TextTransformNone
+  | TextTransformCapitalize
+  | TextTransformUppercase
+  | TextTransformLowercase
+  | TextTransformFullWidth
+  | TextTransformFullSizeKana
+  | TextTransformInherit
+  | TextTransformInitial
+  | TextTransformUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextTransform where
+  toCSS = \case
+    TextTransformNone -> "none"
+    TextTransformCapitalize -> "capitalize"
+    TextTransformUppercase -> "uppercase"
+    TextTransformLowercase -> "lowercase"
+    TextTransformFullWidth -> "full-width"
+    TextTransformFullSizeKana -> "full-size-kana"
+    TextTransformInherit -> "inherit"
+    TextTransformInitial -> "initial"
+    TextTransformUnset -> "unset"
+
+
+data TextUnderlineOffset =
+    TextUnderlineOffsetAuto
+  | TextUnderlineOffsetLength Length
+  | TextUnderlineOffsetPercent Percent
+  | TextUnderlineOffsetInherit
+  | TextUnderlineOffsetInitial
+  | TextUnderlineOffsetUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextUnderlineOffset where
+  toCSS = \case
+    TextUnderlineOffsetAuto -> "auto"
+    TextUnderlineOffsetLength x -> toCSS x
+    TextUnderlineOffsetPercent x -> toCSS x
+    TextUnderlineOffsetInherit -> "inherit"
+    TextUnderlineOffsetInitial -> "initial"
+    TextUnderlineOffsetUnset -> "unset"
+
+
+data TextUnderlinePosition =
+    TextUnderlinePositionAuto
+  | TextUnderlinePositionLeft
+  | TextUnderlinePositionRight
+  | TextUnderlinePositionUnder
+  | TextUnderlinePositionUnderLeft
+  | TextUnderlinePositionUnderRight
+  | TextUnderlinePositionInherit
+  | TextUnderlinePositionInitial
+  | TextUnderlinePositionUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextUnderlinePosition where
+  toCSS = \case
+    TextUnderlinePositionAuto -> "auto"
+    TextUnderlinePositionLeft -> "left"
+    TextUnderlinePositionRight -> "right"
+    TextUnderlinePositionUnder -> "under"
+    TextUnderlinePositionUnderLeft -> "under left"
+    TextUnderlinePositionUnderRight -> "under right"
+    TextUnderlinePositionInherit -> "inherit"
+    TextUnderlinePositionInitial -> "initial"
+    TextUnderlinePositionUnset -> "unset"
+
+
+data TouchActionEnablement =
+    TouchActionAuto
+  | TouchActionNone
+  | TouchActionManipulation
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TouchActionEnablement where
+  toCSS = \case
+    TouchActionAuto -> "auto"
+    TouchActionNone -> "none"
+    TouchActionManipulation -> "manipulation"
+
+
+data TouchActionPanHorizontal =
+    TouchActionPanX
+  | TouchActionPanLeft
+  | TouchActionPanRight
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TouchActionPanHorizontal where
+  toCSS = \case
+    TouchActionPanX -> "pan-x"
+    TouchActionPanLeft -> "pan-left"
+    TouchActionPanRight -> "pan-right"
+
+
+data TouchActionPanVertical =
+    TouchActionPanY
+  | TouchActionPanUp
+  | TouchActionPanDown
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TouchActionPanVertical where
+  toCSS = \case
+    TouchActionPanY -> "pan-y"
+    TouchActionPanUp -> "pan-up"
+    TouchActionPanDown -> "pan-down"
+
+
+data TouchActionPinchZoom = TouchActionPinchZoom | TouchActionNoPinchZoom
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TouchActionPinchZoom where
+  toCSS = \case
+    TouchActionPinchZoom -> "pinch-zoom"
+    TouchActionNoPinchZoom -> ""
+
+
+data TouchAction = TouchActions (Maybe TouchActionEnablement)
+                                (Maybe TouchActionPanHorizontal)
+                                (Maybe TouchActionPanVertical)
+                                (Maybe TouchActionPinchZoom)
+                 | TouchActionInherit
+                 | TouchActionInitial
+                 | TouchActionUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TouchAction where
+  toCSS (TouchActions en ph pv pz) = maybeToCSS en
+                           <> " " <> maybeToCSS ph
+                           <> " " <> maybeToCSS pv
+                           <> " " <> maybeToCSS pz
+  toCSS TouchActionInherit = "inherit"
+  toCSS TouchActionInitial = "initial"
+  toCSS TouchActionUnset   = "unset"
 
 
 data StyleProperty =
@@ -4511,10 +4765,21 @@ data StyleProperty =
   | TextDecorationLine TextDecorationLine
   | TextDecorationStyle TextDecorationStyle
   | TextDecorationThickness TextDecorationThickness
-  | TextEmphasis TextEmphasis
+  | TextEmphasisColor Color
   | TextEmphasisPosition TextEmphasisPosition
+  | TextEmphasisStyle TextEmphasisStyle
+  | TextIndent TextIndent
+  | TextJustify TextJustify
+  | TextOrientation TextOrientation
+  | TextOverflow TextOverflow
+  | TextRendering TextRendering
+  | TextShadow TextShadow
+  | TextTransform TextTransform
+  | TextUnderlineOffset TextUnderlineOffset
+  | TextUnderlinePosition TextUnderlinePosition
+  | Top' Offset
+  | TouchAction TouchAction
   deriving (Eq, Ord, Generic, Read, Show)
-
 
 instance ToCSS StyleProperty where
   toCSS = \case
@@ -4770,8 +5035,20 @@ instance ToCSS StyleProperty where
     TextCombineUpright x -> "text-combine-upright: " <> toCSS x
     TextDecorationColor x -> "text-decoration-color: " <> toCSS x
     TextDecorationThickness x -> "text-decoration-thickness: " <> toCSS x
-    TextEmphasis x -> "text-emphasis: " <> toCSS x
+    TextEmphasisColor x -> "text-emphasis-color: " <> toCSS x
     TextEmphasisPosition x -> "text-emphasis-position: " <> toCSS x
+    TextEmphasisStyle x -> "text-emphasis-style: " <> toCSS x
+    TextIndent x -> "text-indent: " <> toCSS x
+    TextJustify x -> "text-justify: " <> toCSS x
+    TextOrientation x -> "text-orientation: " <> toCSS x
+    TextOverflow x -> "text-overflow: " <> toCSS x
+    TextRendering x -> "text-rendering: " <> toCSS x
+    TextShadow x -> "text-shadow: " <> toCSS x
+    TextTransform x -> "text-transform: " <> toCSS x
+    TextUnderlineOffset x -> "text-underline-offset: " <> toCSS x
+    TextUnderlinePosition x -> "text-underline-position: " <> toCSS x
+    Top' x -> "top: " <> toCSS x
+    TouchAction x -> "touch-action: " <> toCSS x
 
 
 type Style = [StyleProperty]
