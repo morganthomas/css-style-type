@@ -238,6 +238,12 @@ module Data.CSS.Style
   , Matrix4x4 (..)
   , Transform (..)
   , Transforms (..)
+  , TransformBox (..)
+  , TransformStyle (..)
+  , Durations (..)
+  , TransitionProperties (..)
+  , TransitionTimingFunction (..)
+  , TransitionTimingFunctions (..)
   , StyleProperty (..)
   , Style
   ) where
@@ -4741,6 +4747,29 @@ instance ToCSS Matrix4x4 where
   toCSS (Matrix4x4 a b c d) = listToCSS [a,b,c,d]
 
 
+data TransformBox =
+    TransformContentBox
+  | TransformBorderBox
+  | TransformFillBox
+  | TransformStrokeBox
+  | TransformViewBox
+  | TransformBoxInherit
+  | TransformBoxInitial
+  | TransformBoxUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TransformBox where
+  toCSS = \case
+    TransformContentBox -> "content-box"
+    TransformBorderBox -> "border-box"
+    TransformFillBox -> "fill-box"
+    TransformStrokeBox -> "stroke-box"
+    TransformViewBox -> "view-box"
+    TransformBoxInherit -> "inherit"
+    TransformBoxInitial -> "initial"
+    TransformBoxUnset -> "unset"
+
+
 data Transform =
     TransformNone
   | TransformMatrix Double Double Double Double Double Double
@@ -4804,6 +4833,94 @@ instance ToCSS Transforms where
     TransformInherit -> "inherit"
     TransformInitial -> "initial"
     TransformUnset -> "unset"
+
+
+data TransformStyle =
+    TransformStyleFlat
+  | TransformStylePreserve3D
+  | TransformStyleInherit
+  | TransformStyleInitial
+  | TransformStyleUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TransformStyle where
+  toCSS = \case
+    TransformStyleFlat -> "flat"
+    TransformStylePreserve3D -> "preserve-3d"
+    TransformStyleInherit -> "inherit"
+    TransformStyleInitial -> "initial"
+    TransformStyleUnset -> "unset"
+
+
+data Durations = Durations [Duration]
+               | DurationInherit
+               | DurationInitial
+               | DurationUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Durations where
+  toCSS = \case
+    Durations x -> listToCSS x
+    DurationInherit -> "inherit"
+    DurationInitial -> "initial"
+    DurationUnset -> "unset"
+
+
+data TransitionProperties = TransitionProperties [Text]
+                          | TransitionNone
+                          | TransitionAll
+                          | TransitionInherit
+                          | TransitionInitial
+                          | TransitionUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TransitionProperties where
+  toCSS = \case
+    TransitionProperties x -> listToCSS x
+    TransitionNone -> "none"
+    TransitionAll -> "all"
+    TransitionInherit -> "inherit"
+    TransitionInitial -> "initial"
+    TransitionUnset -> "unset"
+
+
+data TransitionTimingFunction =
+    TimingEase
+  | TimingEaseIn
+  | TimingEaseOut
+  | TimingEaseInOut
+  | TimingLinear
+  | TimingStepStart
+  | TimingStepEnd
+  | TimingSteps Int JumpTerm
+  | TimingCubicBezier Double Double Double Double
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TransitionTimingFunction where
+  toCSS = \case
+    TimingEase -> "ease"
+    TimingEaseIn -> "ease-in"
+    TimingEaseOut -> "ease-out"
+    TimingEaseInOut -> "ease-in-out"
+    TimingLinear -> "linear"
+    TimingStepStart -> "step-start"
+    TimingStepEnd -> "step-end"
+    TimingSteps n j -> "steps(" <> toCSS n <> ", " <> toCSS j <> ")"
+    TimingCubicBezier a b c d -> "cubic-bezier(" <> listToCSS [a,b,c,d] <> ")"
+
+
+data TransitionTimingFunctions = TransitionTimingFunctions [TransitionTimingFunction]
+                               | TransitionTimingFunctionInherit
+                               | TransitionTimingFunctionInitial
+                               | TransitionTimingFunctionUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TransitionTimingFunctions where
+  toCSS = \case
+    TransitionTimingFunctions x -> listToCSS x
+    TransitionTimingFunctionInherit -> "inherit"
+    TransitionTimingFunctionInitial -> "initial"
+    TransitionTimingFunctionUnset -> "unset"
 
 
 data StyleProperty =
@@ -5090,6 +5207,13 @@ data StyleProperty =
   | Top' Offset
   | TouchAction TouchAction
   | Transform Transforms
+  | TransformBox TransformBox
+  | TransformOrigin Position
+  | TransformStyle TransformStyle
+  | TransitionDelay Durations
+  | TransitionDuration Durations
+  | TransitionProperty TransitionProperties
+  | TransitionTimingFunction TransitionTimingFunctions
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -5361,6 +5485,13 @@ instance ToCSS StyleProperty where
     Top' x -> "top: " <> toCSS x
     TouchAction x -> "touch-action: " <> toCSS x
     Transform x -> "transform: " <> toCSS x
+    TransformBox x -> "transform-box: " <> toCSS x
+    TransformOrigin x -> "transform-origin: " <> toCSS x
+    TransformStyle x -> "transform-style: " <> toCSS x
+    TransitionDelay x -> "transition-delay: " <> toCSS x
+    TransitionDuration x -> "transition-duration: " <> toCSS x
+    TransitionProperty x -> "transition-property: " <> toCSS x
+    TransitionTimingFunction x -> "transition-timing-function: " <> toCSS x
 
 
 type Style = [StyleProperty]
