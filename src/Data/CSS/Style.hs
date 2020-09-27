@@ -234,6 +234,10 @@ module Data.CSS.Style
   , TouchActionPanVertical (..)
   , TouchActionPinchZoom (..)
   , TouchAction (..)
+  , Col4 (..)
+  , Matrix4x4 (..)
+  , Transform (..)
+  , Transforms (..)
   , StyleProperty (..)
   , Style
   ) where
@@ -4723,6 +4727,85 @@ instance ToCSS TouchAction where
   toCSS TouchActionUnset   = "unset"
 
 
+data Col4 = Col4 Double Double Double Double
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Col4 where
+  toCSS (Col4 a b c d) = listToCSS [a,b,c,d]
+
+
+data Matrix4x4 = Matrix4x4 Col4 Col4 Col4 Col4
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Matrix4x4 where
+  toCSS (Matrix4x4 a b c d) = listToCSS [a,b,c,d]
+
+
+data Transform =
+    TransformNone
+  | TransformMatrix Double Double Double Double Double Double
+  | TransformMatrix3D Matrix4x4
+  | TransformPerspective Length
+  | TransformRotate Angle
+  | TransformRotate3D Double Double Double Angle
+  | TransformRotateX Angle
+  | TransformRotateY Angle
+  | TransformRotateZ Angle
+  | TransformTranslate Length Percent
+  | TransformTranslate3D Length Percent Length
+  | TransformTranslateX Length
+  | TransformTranslateY Length
+  | TransformTranslateZ Length
+  | TransformScale Double Double
+  | TransformScale3D Double Double Double
+  | TransformScaleX Double
+  | TransformScaleY Double
+  | TransformScaleZ Double
+  | TransformSkew Angle Angle
+  | TransformSkewX Angle
+  | TransformSkewY Angle
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Transform where
+  toCSS = \case
+    TransformNone -> "none"
+    TransformMatrix a b c d e f -> "matrix(" <> listToCSS [a,b,c,d,e,f] <> ")"
+    TransformMatrix3D x -> "matrix3d(" <> toCSS x <> ")"
+    TransformPerspective x -> "perspective(" <> toCSS x <> ")"
+    TransformRotate x -> "rotate(" <> toCSS x <> ")"
+    TransformRotate3D a b c d -> "rotate3d(" <> toCSS a <> ", " <> toCSS a <> ", " <> toCSS c <> ", " <> toCSS d <> ")"
+    TransformRotateX x -> "rotateX(" <> toCSS x <> ")"
+    TransformRotateY x -> "rotateY(" <> toCSS x <> ")"
+    TransformRotateZ x -> "rotateZ(" <> toCSS x <> ")"
+    TransformTranslate x y -> "translate(" <> toCSS x <> "," <> toCSS y <> ")"
+    TransformTranslateX x -> "translateX(" <> toCSS x <> ")"
+    TransformTranslateY x -> "translateY(" <> toCSS x <> ")"
+    TransformTranslateZ x -> "translateZ(" <> toCSS x <> ")"
+    TransformScale x y -> "scale(" <> toCSS x <> ", " <> toCSS y <> ")"
+    TransformScale3D a b c -> "scale3d(" <> toCSS a <> ", " <> toCSS b <> ", " <> toCSS c
+    TransformScaleX x -> "scaleX(" <> toCSS x <> ")"
+    TransformScaleY x -> "scaleY(" <> toCSS x <> ")"
+    TransformScaleZ x -> "scaleZ(" <> toCSS x <> ")"
+    TransformSkew a b -> "skew(" <> toCSS a <> ", " <> toCSS b <> ")"
+    TransformSkewX x -> "skew(" <> toCSS x <> ")"
+    TransformSkewY x -> "skew(" <> toCSS x <> ")"
+
+
+data Transforms = Transforms [Transform]
+                | TransformInherit
+                | TransformInitial
+                | TransformUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Transforms where
+  toCSS = \case
+    Transforms [] -> "none"
+    Transforms x -> intercalate " " $ toCSS <$> x
+    TransformInherit -> "inherit"
+    TransformInitial -> "initial"
+    TransformUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -5006,6 +5089,7 @@ data StyleProperty =
   | TextUnderlinePosition TextUnderlinePosition
   | Top' Offset
   | TouchAction TouchAction
+  | Transform Transforms
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -5276,6 +5360,7 @@ instance ToCSS StyleProperty where
     TextUnderlinePosition x -> "text-underline-position: " <> toCSS x
     Top' x -> "top: " <> toCSS x
     TouchAction x -> "touch-action: " <> toCSS x
+    Transform x -> "transform: " <> toCSS x
 
 
 type Style = [StyleProperty]
