@@ -3940,6 +3940,308 @@ instance ToCSS ShapeImageThreshold where
     ShapeImageThresholdUnset -> "unset"
 
 
+data ShapeMargin = ShapeMarginLength Length
+                 | ShapeMarginPercent Percent
+                 | ShapeMarginInherit
+                 | ShapeMarginInitial
+                 | ShapeMarginUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ShapeMargin where
+  toCSS = \case
+    ShapeMarginLength x -> toCSS x
+    ShapeMarginPercent x -> toCSS x
+    ShapeMarginInherit -> "inherit"
+    ShapeMarginInitial -> "initial"
+    ShapeMarginUnset -> "unset"
+
+
+data ShapeOutside = ShapeOutsideNone
+                  | ShapeOutsideMarginBox
+                  | ShapeOutsideBorderBox
+                  | ShapeOutsidePaddingBox
+                  | ShapeOutsideContentBox
+                  | ShapeOutsideBasicShape BasicShape
+                  | ShapeOutsideImage Image
+                  | ShapeOutsideInitial
+                  | ShapeOutsideInherit
+                  | ShapeOutsideUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ShapeOutside where
+  toCSS = \case
+    ShapeOutsideNone -> "none"
+    ShapeOutsideMarginBox -> "margin-box"
+    ShapeOutsideBorderBox -> "border-box"
+    ShapeOutsideContentBox -> "content-box"
+    ShapeOutsidePaddingBox -> "padding-box"
+    ShapeOutsideBasicShape x -> toCSS x
+    ShapeOutsideImage x -> toCSS x
+    ShapeOutsideInitial -> "initial"
+    ShapeOutsideInherit -> "inherit"
+    ShapeOutsideUnset -> "unset"
+
+
+data TabSize = TabSizeInt Int
+             | TabSizeLength Length
+             | TabSizeInherit
+             | TabSizeInitial
+             | TabSizeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TabSize where
+  toCSS = \case
+    TabSizeInt x -> toCSS x
+    TabSizeLength x -> toCSS x
+    TabSizeInherit -> "inherit"
+    TabSizeInitial -> "initial"
+    TabSizeUnset -> "unset"
+
+
+data TableLayout = TableLayoutAuto
+                 | TableLayoutFixed
+                 | TableLayoutInherit
+                 | TableLayoutInitial
+                 | TableLayoutUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TableLayout where
+  toCSS = \case
+    TableLayoutAuto -> "auto"
+    TableLayoutFixed -> "fixed"
+    TableLayoutInherit -> "inherit"
+    TableLayoutInitial -> "initial"
+    TableLayoutUnset -> "unset"
+
+
+data TextAlignKeyword = TextAlignLeft
+                      | TextAlignRight
+                      | TextAlignStart
+                      | TextAlignEnd
+                      | TextAlignCenter
+                      | TextAlignJustify
+                      | TextAlignJustifyAll
+                      | TextAlignMatchParent
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextAlignKeyword where
+  toCSS = \case
+    TextAlignLeft -> "left"
+    TextAlignRight -> "right"
+    TextAlignStart -> "start"
+    TextAlignEnd -> "end"
+    TextAlignCenter -> "center"
+    TextAlignJustify -> "justify"
+    TextAlignJustifyAll -> "justify-all"
+    TextAlignMatchParent -> "match-parent"
+
+data TextAlign = TextAlignKeyword TextAlignKeyword
+               | TextAlignChar Text
+               | TextAlignCharPlusKeyword Text TextAlignKeyword
+               | TextAlignInherit
+               | TextAlignInitial
+               | TextAlignUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextAlign where
+  toCSS = \case
+    TextAlignKeyword x -> toCSS x
+    TextAlignChar x -> "\"" <> x <> "\""
+    TextAlignInherit -> "inherit"
+    TextAlignInitial -> "initial"
+    TextAlignUnset -> "unset"
+
+
+data TextAlignLast = TextAlignLastAuto
+                   | TextAlignLastStart
+                   | TextAlignLastEnd
+                   | TextAlignLastLeft
+                   | TextAlignLastRight
+                   | TextAlignLastCenter
+                   | TextAlignLastJustify
+                   | TextAlignLastInherit
+                   | TextAlignLastInitial
+                   | TextAlignLastUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextAlignLast where
+  toCSS = \case
+    TextAlignLastAuto -> "auto"
+    TextAlignLastStart -> "start"
+    TextAlignLastEnd -> "end"
+    TextAlignLastLeft -> "left"
+    TextAlignLastRight -> "right"
+    TextAlignLastCenter -> "center"
+    TextAlignLastJustify -> "justify"
+    TextAlignLastInherit -> "inherit"
+    TextAlignLastInitial -> "initial"
+    TextAlignLastUnset -> "unset"
+
+
+data TextCombineUpright = TextCombineUprightNone
+                        | TextCombineUprightAll
+                        | TextCombineUprightDigits
+                        | TextCombineUprightDigitsN Int
+                        | TextCombineUprightInherit
+                        | TextCombineUprightInitial
+                        | TextCombineUprightUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextCombineUpright where
+  toCSS = \case
+    TextCombineUprightNone -> "none"
+    TextCombineUprightAll -> "all"
+    TextCombineUprightDigits -> "digits"
+    TextCombineUprightDigitsN n -> "digits " <> toCSS n
+    TextCombineUprightInherit -> "inherit"
+    TextCombineUprightInitial -> "initial"
+    TextCombineUprightUnset -> "unset"
+
+
+data TextDecorationLineType = TextDecorationUnderline
+                            | TextDecorationOverline
+                            | TextDecorationLineThrough
+                            | TextDecorationBlink
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextDecorationLineType where
+  toCSS = \case
+    TextDecorationUnderline -> "underline"
+    TextDecorationOverline -> "overline"
+    TextDecorationLineThrough -> "line-through"
+    TextDecorationBlink -> "blink"
+
+
+data TextDecorationLine = TextDecorationLines [TextDecorationLineType]
+                        | TextDecorationSpellingError
+                        | TextDecorationGrammarError
+                        | TextDecorationLineInherit
+                        | TextDecorationLineInitial
+                        | TextDecorationLineUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextDecorationLine where
+  toCSS = \case
+    TextDecorationLines [] -> "none"
+    TextDecorationLines x -> intercalate " " $ toCSS <$> x
+    TextDecorationSpellingError -> "spelling-error"
+    TextDecorationGrammarError -> "grammar-error"
+    TextDecorationLineInherit -> "inherit"
+    TextDecorationLineInitial -> "initial"
+    TextDecorationLineUnset -> "unset"
+
+
+data TextDecorationStyle =
+    TextDecorationSolid
+  | TextDecorationDouble
+  | TextDecorationDotted
+  | TextDecorationDashed
+  | TextDecorationWavy
+  | TextDecorationStyleInherit
+  | TextDecorationStyleInitial
+  | TextDecorationStyleUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextDecorationStyle where
+  toCSS = \case
+    TextDecorationSolid -> "solid"
+    TextDecorationDouble -> "double"
+    TextDecorationDotted -> "dotted"
+    TextDecorationDashed -> "dashed"
+    TextDecorationWavy -> "wavy"
+    TextDecorationStyleInherit -> "inherit"
+    TextDecorationStyleInitial -> "initial"
+    TextDecorationStyleUnset -> "unset"
+
+
+data TextDecorationThickness =
+    TextDecorationThicknessAuto
+  | TextDecorationThicknessFromFont
+  | TextDecorationThicknessLength Length
+  | TextDecorationThicknessPercent Percent
+  | TextDecorationThicknessInherit
+  | TextDecorationThicknessInitial
+  | TextDecorationThicknessUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextDecorationThickness where
+  toCSS = \case
+    TextDecorationThicknessAuto -> "auto"
+    TextDecorationThicknessFromFont -> "from-font"
+    TextDecorationThicknessLength x -> toCSS x
+    TextDecorationThicknessPercent x -> toCSS x
+    TextDecorationThicknessInherit -> "inherit"
+    TextDecorationThicknessInitial -> "initial"
+    TextDecorationThicknessUnset -> "unset"
+
+
+data TextEmphasisValue = TextEmphasisChar Text
+                       | TextEmphasisColor Color
+                       | TextEmphasisFilled
+                       | TextEmphasisOpen
+                       | TextEmphasisSesame
+                       | TextEmphasisDot
+                       | TextEmphasisCircle
+                       | TextEmphasisDoubleCircle
+                       | TextEmphasisTriangle
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextEmphasisValue where
+  toCSS = \case
+    TextEmphasisChar x -> "'" <> x <> "'"
+    TextEmphasisColor x -> toCSS x
+    TextEmphasisFilled -> "filled"
+    TextEmphasisOpen -> "open"
+    TextEmphasisSesame -> "sesame"
+    TextEmphasisDot -> "dot"
+    TextEmphasisCircle -> "circle"
+    TextEmphasisDoubleCircle -> "double-circle"
+    TextEmphasisTriangle -> "triangle"
+
+data TextEmphasis = TextEmphasisValues [TextEmphasisValue]
+                  | TextEmphasisInherit
+                  | TextEmphasisInitial
+                  | TextEmphasisUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextEmphasis where
+  toCSS = \case
+    TextEmphasisValues [] -> "none"
+    TextEmphasisInherit -> "inherit"
+    TextEmphasisInitial -> "initial"
+    TextEmphasisUnset -> "unset"
+
+
+data TextEmphasisPositionHorizontal = TextEmphasisOver
+                                    | TextEmphasisUnder
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextEmphasisPositionHorizontal where
+  toCSS = \case
+    TextEmphasisOver -> "over"
+    TextEmphasisUnder -> "under"
+
+
+data TextEmphasisPositionVertical = TextEmphasisRight
+                                  | TextEmphasisLeft
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS TextEmphasisPositionVertical where
+  toCSS = \case
+    TextEmphasisRight -> "right"
+    TextEmphasisLeft -> "left"
+
+
+data TextEmphasisPosition = TextEmphasisPositions
+                            TextEmphasisPositionHorizontal
+                            TextEmphasisPositionVertical
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS TextEmphasisPosition where
+  toCSS = \case
+    TextEmphasisPositions x y -> toCSS x <> " " <> toCSS y
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -4197,7 +4499,20 @@ data StyleProperty =
   | ScrollbarColor ScrollbarColor
   | ScrollbarWidth ScrollbarWidth
   | ShapeImageThreshold ShapeImageThreshold
+  | ShapeMargin ShapeMargin
+  | ShapeOutside ShapeOutside
   | StyleSyntax Text
+  | TabSize TabSize
+  | TableLayout TableLayout
+  | TextAlign TextAlign
+  | TextAlignLast TextAlignLast
+  | TextCombineUpright TextCombineUpright
+  | TextDecorationColor Color
+  | TextDecorationLine TextDecorationLine
+  | TextDecorationStyle TextDecorationStyle
+  | TextDecorationThickness TextDecorationThickness
+  | TextEmphasis TextEmphasis
+  | TextEmphasisPosition TextEmphasisPosition
   deriving (Eq, Ord, Generic, Read, Show)
 
 
@@ -4446,10 +4761,21 @@ instance ToCSS StyleProperty where
     ScrollbarColor x -> "scrollbar-color: " <> toCSS x
     ScrollbarWidth x -> "scrollbar-width: " <> toCSS x
     ShapeImageThreshold x -> "shape-image-threshold: " <> toCSS x
+    ShapeMargin x -> "shape-margin: " <> toCSS x
+    ShapeOutside x -> "shape-outside: " <> toCSS x
     StyleSyntax x -> x
+    TabSize x -> "tab-size: " <> toCSS x
+    TableLayout x -> "table-layout: " <> toCSS x
+    TextAlign x -> "text-align: " <> toCSS x
+    TextCombineUpright x -> "text-combine-upright: " <> toCSS x
+    TextDecorationColor x -> "text-decoration-color: " <> toCSS x
+    TextDecorationThickness x -> "text-decoration-thickness: " <> toCSS x
+    TextEmphasis x -> "text-emphasis: " <> toCSS x
+    TextEmphasisPosition x -> "text-emphasis-position: " <> toCSS x
 
 
 type Style = [StyleProperty]
 
 instance ToCSS Style where
   toCSS = intercalate "; " . fmap toCSS
+
