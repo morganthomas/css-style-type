@@ -248,6 +248,7 @@ module Data.CSS.Style
   , UnicodeRangePoint (..)
   , UnicodeRange (..)
   , VerticalAlign (..)
+  , WritingMode (..)
   , StyleProperty (..)
   , Style
   ) where
@@ -5029,7 +5030,115 @@ instance ToCSS WhiteSpace where
     WhiteSpaceBreakSpaces -> "break-spaces"
     WhiteSpaceInitial -> "initial"
     WhiteSpaceInherit -> "inherit"
-    WhiteSpaceUnset -> "unset" 
+    WhiteSpaceUnset -> "unset"
+
+
+data Widows = WidowMin Int
+            | WidowMinInherit
+            | WidowMinInitial
+            | WidowMinUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Widows where
+  toCSS = \case
+    WidowMin x -> toCSS x
+    WidowMinInherit -> "inherit"
+    WidowMinInitial -> "initial"
+    WidowMinUnset -> "unset" 
+
+
+data WillChange =
+    WillChangeAuto
+  | WillChangeScrollPosition
+  | WillChangeContents
+  | WillChangeProperties [Text]
+  | WillChangeInherit
+  | WillChangeInitial
+  | WillChangeUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS WillChange where
+  toCSS = \case
+    WillChangeAuto -> "auto"
+    WillChangeScrollPosition -> "scroll-position"
+    WillChangeContents -> "contents"
+    WillChangeProperties x -> listToCSS x
+    WillChangeInherit -> "inherit"
+    WillChangeInitial -> "initial"
+    WillChangeUnset -> "unset"
+
+
+data WordBreak = WordBreakNormal
+               | WordBreakAll
+               | WordBreakKeepAll
+               | WordBreakWord
+               | WordBreakInherit
+               | WordBreakInitial
+               | WordBreakUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS WordBreak where
+  toCSS = \case
+    WordBreakNormal -> "normal"
+    WordBreakAll -> "break-all"
+    WordBreakKeepAll -> "keep-all"
+    WordBreakWord -> "break-word"
+    WordBreakInherit -> "inherit"
+    WordBreakInitial -> "initial"
+    WordBreakUnset -> "unset"
+
+
+data WordSpacing =
+    WordSpacingNormal
+  | WordSpacingLength Length
+  | WordSpacingPercent Percent
+  | WordSpacingInherit
+  | WordSpacingInitial
+  | WordSpacingUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS WordSpacing where
+  toCSS = \case
+    WordSpacingNormal -> "normal"
+    WordSpacingLength x -> toCSS x
+    WordSpacingPercent x -> toCSS x
+    WordSpacingInherit -> "inherit"
+    WordSpacingInitial -> "initial"
+    WordSpacingUnset -> "unset"
+
+
+data WritingMode = WritingModeHorizontalTb
+                 | WritingModeVerticalRl
+                 | WritingModeVerticalLr
+                 | WritingModeInherit
+                 | WritingModeInitial
+                 | WritingModeUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS WritingMode where
+  toCSS = \case
+    WritingModeHorizontalTb -> "horizontal-tb"
+    WritingModeVerticalRl -> "vertical-rl"
+    WritingModeVerticalLr -> "vertical-lr"
+    WritingModeInherit -> "inherit"
+    WritingModeInitial -> "initial"
+    WritingModeUnset -> "unset"
+
+
+data ZIndex = ZIndexAuto
+            | ZIndexLayer Int
+            | ZIndexInherit
+            | ZIndexInitial
+            | ZIndexUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ZIndex where
+  toCSS = \case
+    ZIndexAuto -> "auto"
+    ZIndexLayer x -> toCSS x
+    ZIndexInherit -> "inherit"
+    ZIndexInitial -> "initial"
+    ZIndexUnset -> "unset"
 
 
 data StyleProperty =
@@ -5328,6 +5437,13 @@ data StyleProperty =
   | VerticalAlign VerticalAlign
   | Visibility Visibility
   | WhiteSpace WhiteSpace
+  | Widows Widows
+  | Width' Offset
+  | WillChange WillChange
+  | WordBreak WordBreak
+  | WordSpacing WordSpacing
+  | WritingMode WritingMode
+  | ZIndex ZIndex
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -5611,10 +5727,13 @@ instance ToCSS StyleProperty where
     VerticalAlign x -> "vertical-align: " <> toCSS x
     Visibility x -> "visibility: " <> toCSS x
     WhiteSpace x -> "white-space: " <> toCSS x
+    Widows x -> "widows: " <> toCSS x
+    Width' x -> "width: " <> toCSS x
+    WillChange x -> "will-change: " <> toCSS x
+    WordBreak x -> "word-break: " <> toCSS x
+    WordSpacing x -> "word-spacing: " <> toCSS x
+    WritingMode x -> "writing-mode: " <> toCSS x
+    ZIndex x -> "z-index: " <> toCSS x
 
 
 type Style = [StyleProperty]
-
-instance ToCSS Style where
-  toCSS = intercalate "; " . fmap toCSS
-
