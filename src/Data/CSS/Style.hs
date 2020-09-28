@@ -249,6 +249,7 @@ module Data.CSS.Style
   , UnicodeRange (..)
   , VerticalAlign (..)
   , WritingMode (..)
+  , ZIndex (..)
   , StyleProperty (..)
   , Style
   ) where
@@ -5444,6 +5445,7 @@ data StyleProperty =
   | WordSpacing WordSpacing
   | WritingMode WritingMode
   | ZIndex ZIndex
+  | Zoom ZoomFactor
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
