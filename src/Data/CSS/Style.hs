@@ -81,6 +81,7 @@ module Data.CSS.Style
   , BreakInside (..)
   , CaptionSide (..)
   , Clear (..)
+  , Clip (..)
   , ColorAdjust (..)
   , ColumnCount (..)
   , ColumnFill (..)
@@ -1821,6 +1822,22 @@ instance ToCSS Clear where
     ClearInherit -> "inherit"
     ClearInitial -> "initial"
     ClearUnset -> "unset"
+
+
+data Clip = ClipAuto
+          | ClipRect Double Double Double Double
+          | ClipInherit
+          | ClipInitial
+          | ClipUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS Clip where
+  toCSS = \case
+    ClipAuto -> "auto"
+    ClipRect a b c d -> "rect(" <> toCSS a <> ", " <> toCSS b <> ", " <> toCSS c <> ", " <> toCSS d <> ")"
+    ClipInherit -> "inherit"
+    ClipInitial -> "initial"
+    ClipUnset -> "unset"
 
 
 data ColorAdjust = ColorAdjustEconomy | ColorAdjustExact
@@ -5239,7 +5256,8 @@ data StyleProperty =
   | CaptionSide CaptionSide
   | CaretColor Color
   | Clear Clear
-  -- TODO: clip, clip-path
+  | Clip Clip
+  -- TODO: clip-path
   | Color Color
   | ColorAdjust ColorAdjust
   | ColumnCount ColumnCount
@@ -5545,6 +5563,7 @@ instance ToCSS StyleProperty where
     CaptionSide x -> "caption-side: " <> toCSS x
     CaretColor x -> "caret-color: " <> toCSS x
     Clear x -> "clear: " <> toCSS x
+    Clip x -> "clip: " <> toCSS x
     Color x -> "color: " <> toCSS x
     ColorAdjust x -> "color-adjust: " <> toCSS x
     ColumnCount x -> "column-count: " <> toCSS x
