@@ -1052,6 +1052,7 @@ instance ToCSS Filter where
 
 data Visibility = Visible
                 | Hidden
+                | Collapse
                 | Inherit
                 | Initial
                 | Unset
@@ -1061,6 +1062,7 @@ instance ToCSS Visibility where
   toCSS = \case
     Visible -> "visible"
     Hidden -> "hidden"
+    Collapse -> "collapse"
     Inherit -> "inherit"
     Initial -> "initial"
     Unset -> "unset"
@@ -5005,6 +5007,31 @@ instance ToCSS VerticalAlign where
     VerticalAlignUnset -> "unset"
 
 
+data WhiteSpace =
+    WhiteSpaceNormal
+  | WhiteSpaceNoWrap
+  | WhiteSpacePre
+  | WhiteSpacePreWrap
+  | WhiteSpacePreLine
+  | WhiteSpaceBreakSpaces
+  | WhiteSpaceInherit
+  | WhiteSpaceInitial
+  | WhiteSpaceUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS WhiteSpace where
+  toCSS = \case
+    WhiteSpaceNormal -> "normal"
+    WhiteSpaceNoWrap -> "nowrap"
+    WhiteSpacePre -> "pre"
+    WhiteSpacePreWrap -> "pre-wrap"
+    WhiteSpacePreLine -> "pre-line"
+    WhiteSpaceBreakSpaces -> "break-spaces"
+    WhiteSpaceInitial -> "initial"
+    WhiteSpaceInherit -> "inherit"
+    WhiteSpaceUnset -> "unset" 
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -5299,6 +5326,8 @@ data StyleProperty =
   | UnicodeBidi UnicodeBidi
   | UnicodeRange UnicodeRange
   | VerticalAlign VerticalAlign
+  | Visibility Visibility
+  | WhiteSpace WhiteSpace
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -5580,6 +5609,8 @@ instance ToCSS StyleProperty where
     UnicodeBidi x -> "unicode-bidi: " <> toCSS x
     UnicodeRange x -> "unicode-range: " <> toCSS x
     VerticalAlign x -> "vertical-align: " <> toCSS x
+    Visibility x -> "visibility: " <> toCSS x
+    WhiteSpace x -> "white-space: " <> toCSS x
 
 
 type Style = [StyleProperty]
