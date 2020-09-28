@@ -244,6 +244,9 @@ module Data.CSS.Style
   , TransitionProperties (..)
   , TransitionTimingFunction (..)
   , TransitionTimingFunctions (..)
+  , UnicodeBidi (..)
+  , UnicodeRangePoint (..)
+  , UnicodeRange (..)
   , StyleProperty (..)
   , Style
   ) where
@@ -252,6 +255,7 @@ import Data.Maybe (fromMaybe, maybeToList)
 import Data.String
 import Data.Text
 import GHC.Generics
+import Numeric (showHex)
 
 
 class ToCSS a where
@@ -4923,6 +4927,50 @@ instance ToCSS TransitionTimingFunctions where
     TransitionTimingFunctionUnset -> "unset"
 
 
+data UnicodeBidi =
+    UnicodeBidiNormal
+  | UnicodeBidiEmbed
+  | UnicodeBidiIsolate
+  | UnicodeBidiOverride
+  | UnicodeBidiIsolateOverride
+  | UnicodeBidiPlainText
+  | UnicodeBidiInherit
+  | UnicodeBidiInitial
+  | UnicodeBidiUnset
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS UnicodeBidi where
+  toCSS = \case
+    UnicodeBidiNormal -> "normal"
+    UnicodeBidiEmbed -> "embed"
+    UnicodeBidiOverride -> "override"
+    UnicodeBidiIsolateOverride -> "isolate-override"
+    UnicodeBidiPlainText -> "plaintext"
+    UnicodeBidiInherit -> "inherit"
+    UnicodeBidiInitial -> "initial"
+    UnicodeBidiUnset -> "unset"
+
+
+data UnicodeRangePoint = UnicodeRangePoint Integer
+                       | UnicodeRangeWildcard Text
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS UnicodeRangePoint where
+  toCSS = \case
+    UnicodeRangePoint x -> "U+" <> pack (showHex x "")
+    UnicodeRangeWildcard x -> "U+" <> x
+
+
+data UnicodeRange = UnicodeRange1 UnicodeRangePoint
+                  | UnicodeRange2 UnicodeRangePoint UnicodeRangePoint
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS UnicodeRange where
+  toCSS = \case
+    UnicodeRange1 x -> toCSS x
+    UnicodeRange2 x y -> toCSS x <> "-" <> toCSS y
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -5214,6 +5262,8 @@ data StyleProperty =
   | TransitionDuration Durations
   | TransitionProperty TransitionProperties
   | TransitionTimingFunction TransitionTimingFunctions
+  | UnicodeBidi UnicodeBidi
+  | UnicodeRange UnicodeRange
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -5492,6 +5542,8 @@ instance ToCSS StyleProperty where
     TransitionDuration x -> "transition-duration: " <> toCSS x
     TransitionProperty x -> "transition-property: " <> toCSS x
     TransitionTimingFunction x -> "transition-timing-function: " <> toCSS x
+    UnicodeBidi x -> "unicode-bidi: " <> toCSS x
+    UnicodeRange x -> "unicode-range: " <> toCSS x
 
 
 type Style = [StyleProperty]
