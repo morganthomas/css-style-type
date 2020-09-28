@@ -82,6 +82,8 @@ module Data.CSS.Style
   , CaptionSide (..)
   , Clear (..)
   , Clip (..)
+  , GeometryBox (..)
+  , ClipPath (..)
   , ColorAdjust (..)
   , ColumnCount (..)
   , ColumnFill (..)
@@ -1703,13 +1705,13 @@ instance ToCSS BoxShadows where
     BoxShadowUnset -> "unset"
 
 
-data BoxSizing = BorderBox | ContentBox
+data BoxSizing = BoxSizingBorderBox | BoxSizingContentBox
   deriving (Eq, Ord, Enum, Bounded, Generic, Read, Show)
 
 instance ToCSS BoxSizing where
   toCSS = \case
-    BorderBox -> "border-box"
-    ContentBox -> "content-box"
+    BoxSizingBorderBox -> "border-box"
+    BoxSizingContentBox -> "content-box"
 
 
 data BreakAround =
@@ -1838,6 +1840,48 @@ instance ToCSS Clip where
     ClipInherit -> "inherit"
     ClipInitial -> "initial"
     ClipUnset -> "unset"
+
+
+data GeometryBox = MarginBox
+                 | BorderBox
+                 | PaddingBox
+                 | ContentBox
+                 | FillBox
+                 | StrokeBox
+                 | ViewBox
+  deriving (Eq, Ord, Bounded, Enum, Generic, Read, Show)
+
+instance ToCSS GeometryBox where
+  toCSS = \case
+    MarginBox -> "margin-box"
+    BorderBox -> "border-box"
+    PaddingBox -> "padding-box"
+    ContentBox -> "content-box"
+    FillBox -> "fill-box"
+    StrokeBox -> "stroke-box"
+    ViewBox -> "view-box"
+
+
+data ClipPath = ClipPathNone
+              | ClipPathSource Text
+              | ClipPathGeometric GeometryBox
+              | ClipPathShape BasicShape
+              | ClipPathGeometricShape GeometryBox BasicShape
+              | ClipPathInherit
+              | ClipPathInitial
+              | ClipPathUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS ClipPath where
+  toCSS = \case
+    ClipPathNone -> "none"
+    ClipPathSource txt -> "url(" <> txt <> ")"
+    ClipPathGeometric x -> toCSS x
+    ClipPathShape x -> toCSS x
+    ClipPathGeometricShape x y -> toCSS x <> " " <> toCSS y
+    ClipPathInherit -> "inherit"
+    ClipPathInitial -> "initial"
+    ClipPathUnset -> "unset"
 
 
 data ColorAdjust = ColorAdjustEconomy | ColorAdjustExact
@@ -5257,7 +5301,7 @@ data StyleProperty =
   | CaretColor Color
   | Clear Clear
   | Clip Clip
-  -- TODO: clip-path
+  | ClipPath ClipPath
   | Color Color
   | ColorAdjust ColorAdjust
   | ColumnCount ColumnCount
@@ -5564,6 +5608,7 @@ instance ToCSS StyleProperty where
     CaretColor x -> "caret-color: " <> toCSS x
     Clear x -> "clear: " <> toCSS x
     Clip x -> "clip: " <> toCSS x
+    ClipPath x -> "clip-path: " <> toCSS x
     Color x -> "color: " <> toCSS x
     ColorAdjust x -> "color-adjust: " <> toCSS x
     ColumnCount x -> "column-count: " <> toCSS x
