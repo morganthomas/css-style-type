@@ -247,6 +247,7 @@ module Data.CSS.Style
   , UnicodeBidi (..)
   , UnicodeRangePoint (..)
   , UnicodeRange (..)
+  , VerticalAlign (..)
   , StyleProperty (..)
   , Style
   ) where
@@ -4971,6 +4972,39 @@ instance ToCSS UnicodeRange where
     UnicodeRange2 x y -> toCSS x <> "-" <> toCSS y
 
 
+data VerticalAlign =
+    VerticalAlignBaseline
+  | VerticalAlignSub
+  | VerticalAlignSuper
+  | VerticalAlignTextTop
+  | VerticalAlignTextBottom
+  | VerticalAlignMiddle
+  | VerticalAlignTop
+  | VerticalAlignBottom
+  | VerticalAlignLength Length
+  | VerticalAlignPercent Percent
+  | VerticalAlignInherit
+  | VerticalAlignInitial
+  | VerticalAlignUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS VerticalAlign where
+  toCSS = \case
+    VerticalAlignBaseline -> "baseline"
+    VerticalAlignSub -> "sub"
+    VerticalAlignSuper -> "super"
+    VerticalAlignTextTop -> "text-top"
+    VerticalAlignTextBottom -> "text-bottom"
+    VerticalAlignMiddle -> "middle"
+    VerticalAlignTop -> "top"
+    VerticalAlignBottom -> "bottom"
+    VerticalAlignLength x -> toCSS x
+    VerticalAlignPercent x -> toCSS x
+    VerticalAlignInherit -> "inherit"
+    VerticalAlignInitial -> "initial"
+    VerticalAlignUnset -> "unset"
+
+
 data StyleProperty =
     AlignContent AlignContent
   | AlignItems AlignItems
@@ -5264,6 +5298,7 @@ data StyleProperty =
   | TransitionTimingFunction TransitionTimingFunctions
   | UnicodeBidi UnicodeBidi
   | UnicodeRange UnicodeRange
+  | VerticalAlign VerticalAlign
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS StyleProperty where
@@ -5544,6 +5579,7 @@ instance ToCSS StyleProperty where
     TransitionTimingFunction x -> "transition-timing-function: " <> toCSS x
     UnicodeBidi x -> "unicode-bidi: " <> toCSS x
     UnicodeRange x -> "unicode-range: " <> toCSS x
+    VerticalAlign x -> "vertical-align: " <> toCSS x
 
 
 type Style = [StyleProperty]
