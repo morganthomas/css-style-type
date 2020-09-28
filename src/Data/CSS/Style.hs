@@ -74,6 +74,8 @@ module Data.CSS.Style
   , BorderSpacing (..)
   , Offset (..)
   , BoxDecorationBreak (..)
+  , BoxShadow (..)
+  , BoxShadows (..)
   , BoxSizing (..)
   , BreakAround (..)
   , BreakInside (..)
@@ -1410,7 +1412,6 @@ data Gradient = GradientLinear LinearGradient
               | GradientRepeatingLinear (RepeatingGradient LinearGradient)
               | GradientRepeatingRadial (RepeatingGradient RadialGradient)
               | GradientConic ConicGradient
-  -- TODO
   deriving (Eq, Ord, Generic, Read, Show)
 
 instance ToCSS Gradient where
@@ -1675,6 +1676,30 @@ instance ToCSS BoxDecorationBreak where
     BoxDecorationBreakInitial -> "intiial"
     BoxDecorationBreakInherit -> "inherit"
     BoxDecorationBreakUnset -> "unset"
+
+
+data BoxShadow = BoxShadowNoSpread Shadow
+               | BoxShadowSpread Shadow Double
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BoxShadow where
+  toCSS = \case
+    BoxShadowNoSpread x -> toCSS x
+    BoxShadowSpread x y -> toCSS x <> " " <> toCSS y
+
+
+data BoxShadows = BoxShadows [BoxShadow]
+                | BoxShadowInherit
+                | BoxShadowInitial
+                | BoxShadowUnset
+  deriving (Eq, Ord, Generic, Read, Show)
+
+instance ToCSS BoxShadows where
+  toCSS = \case
+    BoxShadows x -> listToCSS x
+    BoxShadowInitial -> "initial"
+    BoxShadowInherit -> "inherit"
+    BoxShadowUnset -> "unset"
 
 
 data BoxSizing = BorderBox | ContentBox
@@ -5206,7 +5231,7 @@ data StyleProperty =
   | BorderWidth BorderWidth
   | Bottom' Offset
   | BoxDecorationBreak BoxDecorationBreak
-  -- TODO box-shadow
+  | BoxShadow BoxShadow
   | BoxSizing BoxSizing
   | BreakAfter BreakAround
   | BreakBefore BreakAround
@@ -5512,6 +5537,7 @@ instance ToCSS StyleProperty where
     BorderWidth x -> "border-width: " <> toCSS x
     Bottom' x -> "bottom: " <> toCSS x
     BoxDecorationBreak x -> "box-decoration-break: " <> toCSS x
+    BoxShadow x -> "box-shadow: " <> toCSS x
     BoxSizing x -> "box-sizing: " <> toCSS x
     BreakAfter x -> "break-after: " <> toCSS x
     BreakBefore x -> "break-before: " <> toCSS x
